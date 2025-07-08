@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Nút back -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Quay lại"
+            android:padding="8dp"
+            android:layout_gravity="start"
+            app:tint="#222" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#F5F5F5">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/ivProductImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:scaleType="centerCrop"
+                    android:background="#FFF"
+                    android:contentDescription="Ảnh sản phẩm" />
+
+                <TextView
+                    android:id="@+id/tvProductName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên sản phẩm"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:textColor="#222" />
+
+                <TextView
+                    android:id="@+id/tvProductPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="199,000đ"
+                    android:textSize="20sp"
+                    android:textColor="#E91E63"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tvProductCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Danh mục: "
+                    android:textSize="16sp"
+                    android:textColor="#666"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tvProductBrand"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thương hiệu: "
+                    android:textSize="16sp"
+                    android:textColor="#666"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tvProductMaterial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Chất liệu: "
+                    android:textSize="16sp"
+                    android:textColor="#666"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tvProductStock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kho: "
+                    android:textSize="16sp"
+                    android:textColor="#666"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tvProductDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mô tả sản phẩm"
+                    android:textSize="15sp"
+                    android:textColor="#444"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="4dp" />
+
+                <Button
+                    android:id="@+id/btnAddToCart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thêm vào giỏ hàng"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="#fff"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="8dp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Bottom Navigation -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            app:elevation="8dp"
+            app:menu="@menu/bottom_navigation" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout> 

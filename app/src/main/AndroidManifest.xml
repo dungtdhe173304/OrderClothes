@@ -35,6 +35,14 @@
             android:name=".activities.RegisterActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activities.ProductDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.CartActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

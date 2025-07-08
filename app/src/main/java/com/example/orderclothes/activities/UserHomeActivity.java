@@ -17,6 +17,7 @@ import com.example.orderclothes.adapters.CategoryAdapter;
 import com.example.orderclothes.adapters.ProductAdapter;
 import com.example.orderclothes.database.dao.CategoryDAO;
 import com.example.orderclothes.database.dao.ProductDAO;
+import com.example.orderclothes.database.dao.CartDAO;
 import com.example.orderclothes.models.Category;
 import com.example.orderclothes.models.Product;
 import com.example.orderclothes.models.User;
@@ -206,10 +207,8 @@ public class UserHomeActivity extends AppCompatActivity implements
                 if (itemId == R.id.nav_home) {
                     return true;
                 } else if (itemId == R.id.nav_cart) {
-                    Toast.makeText(UserHomeActivity.this, "Cart - Coming soon", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(UserHomeActivity.this, CartActivity.class));
                     return true;
-                } else if (itemId == R.id.nav_voucher) {
-                    Toast.makeText(UserHomeActivity.this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
                 } else if (itemId == R.id.nav_voucher) {
                     Toast.makeText(UserHomeActivity.this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
                     return true;
@@ -246,8 +245,9 @@ public class UserHomeActivity extends AppCompatActivity implements
 
     @Override
     public void onProductClick(Product product) {
-        // TODO: Open ProductDetailActivity
-        Toast.makeText(this, "Product: " + product.getProductName(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ProductDetailActivity.class);
+        intent.putExtra("product_id", product.getProductId());
+        startActivity(intent);
     }
 
     @Override
@@ -256,8 +256,12 @@ public class UserHomeActivity extends AppCompatActivity implements
             Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // TODO: Add to cart functionality
+        if (currentUser == null) {
+            Toast.makeText(this, "Bạn cần đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        CartDAO cartDAO = new CartDAO(this);
+        cartDAO.addToCart(currentUser.getUserId(), product, 1);
         Toast.makeText(this, "Đã thêm " + product.getProductName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
     }
 
