@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">OrderClothes</string>
+    <string-array name="order_status_array">
+        <item>pending</item>
+        <item>processing</item>
+        <item>completed</item>
+        <item>cancelled</item>
+    </string-array>
 </resources>

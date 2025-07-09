@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "order_clothes.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Singleton pattern
     private static DatabaseHelper instance;
@@ -94,6 +94,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Tạo products mẫu
         insertSampleProducts(db);
+
+        //Tạo mầu order
+        insertSampleOrders(db);
     }
 
     // Tạo admin mặc định
@@ -159,6 +162,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Váy đầm
         insertProduct(db, "Váy đầm maxi hoa", "Váy đầm dài họa tiết hoa", 699000, 5, "Mango", "Chiffon", "https://kenh14cdn.com/203336854389633024/2025/6/29/48427799012203294996640565770072566130465660n-1751213367694-1751213367933736583458.jpg", 15);
         insertProduct(db, "Váy đầm công sở", "Váy đầm ngắn thanh lịch", 459000, 5, "Zara", "Polyester", "https://kenh14cdn.com/203336854389633024/2025/6/29/48427799012203294996640565770072566130465660n-1751213367694-1751213367933736583458.jpg", 20);
+    }
+
+    // Thêm đơn hàng mẫu
+    private void insertSampleOrders(SQLiteDatabase db) {
+        // Đơn hàng 1
+        long orderId1 = insertOrder(db,
+                "ORD001", 2, "Nguyễn Văn A", "0981234567", "123 Đường ABC, Hà Nội",
+                199000, null, null, 0.0, 20000, 219000, "pending", "Giao hàng trong tuần");
+
+        insertOrderItem(db, orderId1, 1, "Áo thun nam basic", 1, "S", 1, 199000);
+
+        // Đơn hàng 2
+        long orderId2 = insertOrder(db,
+                "ORD002", 2, "Nguyễn Thị B", "0909876543", "456 Đường XYZ, TP.HCM",
+                229000 + 359000, null, null, 0.0, 30000, 618000, "confirmed", null);
+
+        insertOrderItem(db, orderId2, 2, "Áo thun nữ oversize", 2, "M", 1, 229000);
+        insertOrderItem(db, orderId2, 4, "Áo sơ mi nữ họa tiết", 4, "L", 1, 359000);
+    }
+
+    private long insertOrder(SQLiteDatabase db, String orderNumber, int userId, String customerName,
+                             String phone, String address, double subtotal, Integer voucherId, String voucherCode,
+                             double discount, double shipping, double total, String status, String notes) {
+        ContentValues values = new ContentValues();
+        values.put("order_number", orderNumber);
+        values.put("user_id", userId);
+        values.put("customer_name", customerName);
+        values.put("customer_phone", phone);
+        values.put("shipping_address", address);
+        values.put("subtotal", subtotal);
+        if (voucherId != null) values.put("voucher_id", voucherId);
+        if (voucherCode != null) values.put("voucher_code", voucherCode);
+        values.put("discount_amount", discount);
+        values.put("shipping_fee", shipping);
+        values.put("total_amount", total);
+        values.put("status", status);
+        values.put("notes", notes);
+        return db.insert("orders", null, values);
+    }
+
+    private void insertOrderItem(SQLiteDatabase db, long orderId, int productId, String productName,
+                                 int sizeId, String sizeName, int quantity, double unitPrice) {
+        ContentValues values = new ContentValues();
+        values.put("order_id", orderId);
+        values.put("product_id", productId);
+        values.put("product_name", productName);
+        values.put("size_id", sizeId);
+        values.put("size_name", sizeName);
+        values.put("quantity", quantity);
+        values.put("unit_price", unitPrice);
+        values.put("total_price", unitPrice * quantity);
+        db.insert("order_items", null, values);
     }
 
     // Helper method để insert product

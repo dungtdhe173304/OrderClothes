@@ -6,20 +6,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+
 import com.example.orderclothes.R;
+import com.example.orderclothes.database.dao.OrderDAO;
+import com.example.orderclothes.database.dao.UserDAO;
+import com.example.orderclothes.models.Order;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
-    private TextView tvWelcome, tvTotalProducts, tvTotalOrders, tvTotalUsers, tvRevenue;
+    private TextView tvTotalProducts, tvTotalOrders, tvTotalUsers, tvRevenue;
     private CardView cardManageProducts, cardManageOrders, cardManageUsers, cardReports;
 
     private SessionManager sessionManager;
     private User currentUser;
+    private UserDAO userDAO;
+
+    private final ActivityResultLauncher<Intent> userManageLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    loadDashboardData(); // Cập nhật lại tổng số user
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +44,11 @@ public class AdminDashboardActivity extends AppCompatActivity {
         initViews();
         initObjects();
         setupToolbar();
-        setupAdminInfo();
         loadDashboardData();
         setClickListeners();
     }
 
     private void initViews() {
-        tvWelcome = findViewById(R.id.tvWelcome);
         tvTotalProducts = findViewById(R.id.tvTotalProducts);
         tvTotalOrders = findViewById(R.id.tvTotalOrders);
         tvTotalUsers = findViewById(R.id.tvTotalUsers);
@@ -50,11 +63,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private void initObjects() {
         sessionManager = new SessionManager(this);
         currentUser = sessionManager.getCurrentUser();
+        userDAO = new UserDAO(this);
 
-        // Kiểm tra session và quyền admin
         if (currentUser == null || !currentUser.isAdmin()) {
             redirectToLogin();
-            return;
         }
     }
 
@@ -66,48 +78,39 @@ public class AdminDashboardActivity extends AppCompatActivity {
         }
     }
 
-    private void setupAdminInfo() {
-        if (currentUser != null) {
-            tvWelcome.setText("Chào Admin " + currentUser.getFullName() + "!");
-        }
-    }
 
     private void loadDashboardData() {
-        // TODO: Load thống kê từ database
-        // Tạm thời hiển thị dữ liệu mẫu
+        int totalUsers = userDAO.getAllUsers().size(); // ✅ Lấy đúng từ DB
+        tvTotalUsers.setText(String.valueOf(totalUsers));
+
+        // Tạm thời dùng dữ liệu giả
         tvTotalProducts.setText("8");
-        tvTotalOrders.setText("0");
-        tvTotalUsers.setText("2");
-        tvRevenue.setText("0 VNĐ");
+        OrderDAO orderDAO = new OrderDAO(this);
+        int totalOrders = orderDAO.getAllOrders().size();
+        double totalRevenue = orderDAO.getAllOrders().stream()
+                .mapToDouble(Order::getTotalAmount)
+                .sum();
+
+        tvTotalOrders.setText(String.valueOf(totalOrders));
+        tvRevenue.setText(String.format("%,.0f VNĐ", totalRevenue));
     }
 
     private void setClickListeners() {
         cardManageProducts.setOnClickListener(v -> {
-            // Chuyển đến quản lý sản phẩm
             Toast.makeText(this, "Đang phát triển - Quản lý sản phẩm", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this, ManageProductsActivity.class);
-            // startActivity(intent);
         });
 
         cardManageOrders.setOnClickListener(v -> {
-            // Chuyển đến quản lý đơn hàng
-            Toast.makeText(this, "Đang phát triển - Quản lý đơn hàng", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this, ManageOrdersActivity.class);
-            // startActivity(intent);
+            startActivity(new Intent(this, ManageOrdersActivity.class));
         });
 
         cardManageUsers.setOnClickListener(v -> {
-            // Chuyển đến quản lý người dùng
-            Toast.makeText(this, "Đang phát triển - Quản lý người dùng", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this, ManageUsersActivity.class);
-            // startActivity(intent);
+            Intent intent = new Intent(this, ManageUserActivity.class);
+            userManageLauncher.launch(intent); // 👈 Lắng nghe kết quả quay về
         });
 
         cardReports.setOnClickListener(v -> {
-            // Chuyển đến báo cáo thống kê
             Toast.makeText(this, "Đang phát triển - Báo cáo thống kê", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this, ReportsActivity.class);
-            // startActivity(intent);
         });
     }
 
@@ -119,13 +122,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_logout) {
+        if (item.getItemId() == R.id.action_logout) {
             performLogout();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

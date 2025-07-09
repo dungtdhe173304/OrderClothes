@@ -23,16 +23,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvWelcome"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Chào Admin!"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="24dp"
-                android:textColor="@color/colorPrimary" />
-
             <!-- Thống kê tổng quan -->
             <TextView
                 android:layout_width="wrap_content"
