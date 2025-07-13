@@ -14,7 +14,7 @@ import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
 
 public class AdminDashboardActivity extends AppCompatActivity {
-
+//a
     private TextView tvWelcome, tvTotalProducts, tvTotalOrders, tvTotalUsers, tvRevenue;
     private CardView cardManageProducts, cardManageOrders, cardManageUsers, cardReports;
 
