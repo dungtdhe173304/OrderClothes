@@ -19,7 +19,9 @@ import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
 import com.example.orderclothes.models.Order;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
     private final Context context;
@@ -46,7 +48,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
         holder.tvOrderNumber.setText("Mã đơn: " + order.getOrderNumber());
         holder.tvCustomerName.setText("Khách hàng: " + order.getCustomerName());
-        holder.tvTotal.setText("Tổng tiền: " + order.getTotalAmount() + " đ");
+        holder.tvTotal.setText("Tổng tiền: " + formatCurrency(order.getTotalAmount()));
 
         // Danh sách trạng thái
         String[] statusList = {"pending", "processing", "completed", "cancelled"};
@@ -89,13 +91,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
+
         holder.btnDetails.setOnClickListener(v -> {
             String message = "Mã đơn: " + order.getOrderNumber() + "\n"
                     + "Khách hàng: " + order.getCustomerName() + "\n"
                     + "Số điện thoại: " + order.getCustomerPhone() + "\n"
                     + "Địa chỉ giao hàng: " + order.getShippingAddress() + "\n"
                     + "Trạng thái: " + order.getStatus() + "\n"
-                    + "Tổng tiền: " + order.getTotalAmount() + " đ";
+                    + "Tổng tiền: " + formatCurrency(order.getTotalAmount());
 
             new AlertDialog.Builder(context)
                     .setTitle("Chi tiết đơn hàng")
@@ -110,10 +113,17 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         return orderList.size();
     }
 
+    // ✅ Hàm định dạng tiền theo chuẩn VNĐ
+    private String formatCurrency(double amount) {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(amount); // ví dụ: 250.000 ₫
+    }
+
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderNumber, tvCustomerName, tvTotal;
         Spinner spinnerStatus;
         Button btnDetails;
+
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
             tvOrderNumber = itemView.findViewById(R.id.tvOrderNumber);

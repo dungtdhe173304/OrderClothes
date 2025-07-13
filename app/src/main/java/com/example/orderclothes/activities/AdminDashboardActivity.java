@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 
 import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
+import com.example.orderclothes.database.dao.ProductDAO;
 import com.example.orderclothes.database.dao.UserDAO;
 import com.example.orderclothes.models.Order;
 import com.example.orderclothes.models.User;
@@ -28,6 +29,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private User currentUser;
     private UserDAO userDAO;
+
+    private ProductDAO productDAO;
 
     private final ActivityResultLauncher<Intent> userManageLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -64,6 +67,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         currentUser = sessionManager.getCurrentUser();
         userDAO = new UserDAO(this);
+        productDAO = new ProductDAO(this);
 
         if (currentUser == null || !currentUser.isAdmin()) {
             redirectToLogin();
@@ -84,7 +88,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
         tvTotalUsers.setText(String.valueOf(totalUsers));
 
         // Tạm thời dùng dữ liệu giả
-        tvTotalProducts.setText("8");
+        int totalProducts = productDAO.getTotalProducts();
+        tvTotalProducts.setText(String.valueOf(totalProducts));
+
         OrderDAO orderDAO = new OrderDAO(this);
         int totalOrders = orderDAO.getAllOrders().size();
         double totalRevenue = orderDAO.getAllOrders().stream()

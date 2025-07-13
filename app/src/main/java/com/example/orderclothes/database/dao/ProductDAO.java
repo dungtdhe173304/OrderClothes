@@ -4,13 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.example.orderclothes.database.DatabaseHelper;
 import com.example.orderclothes.models.Product;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
-    private DatabaseHelper dbHelper;
+    private final DatabaseHelper dbHelper;
     private SQLiteDatabase database;
 
     public ProductDAO(Context context) {
@@ -27,13 +29,35 @@ public class ProductDAO {
         }
     }
 
+    // ✅ Thêm: Lấy tổng số sản phẩm đang hoạt động (is_active = 1)
+    public int getTotalProducts() {
+        int count = 0;
+        open();
+        Cursor cursor = null;
+
+        try {
+            cursor = database.rawQuery("SELECT COUNT(*) FROM products WHERE is_active = 1", null);
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+            close();
+        }
+
+        return count;
+    }
+
     // Lấy tất cả sản phẩm active
     public List<Product> getAllActiveProducts() {
         List<Product> products = new ArrayList<>();
         open();
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = database.query("products", null, "is_active = 1",
+            cursor = database.query("products", null, "is_active = 1",
                     null, null, null, "created_at DESC");
 
             if (cursor != null) {
@@ -41,11 +65,11 @@ public class ProductDAO {
                     Product product = createProductFromCursor(cursor);
                     products.add(product);
                 }
-                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (cursor != null) cursor.close();
             close();
         }
 
@@ -57,8 +81,9 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
         open();
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = database.query("products", null,
+            cursor = database.query("products", null,
                     "category_id = ? AND is_active = 1",
                     new String[]{String.valueOf(categoryId)},
                     null, null, "created_at DESC");
@@ -68,11 +93,11 @@ public class ProductDAO {
                     Product product = createProductFromCursor(cursor);
                     products.add(product);
                 }
-                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (cursor != null) cursor.close();
             close();
         }
 
@@ -84,11 +109,12 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
         open();
 
+        Cursor cursor = null;
         try {
             String selection = "(product_name LIKE ? OR brand LIKE ?) AND is_active = 1";
             String[] selectionArgs = {"%" + keyword + "%", "%" + keyword + "%"};
 
-            Cursor cursor = database.query("products", null, selection, selectionArgs,
+            cursor = database.query("products", null, selection, selectionArgs,
                     null, null, "created_at DESC");
 
             if (cursor != null) {
@@ -96,11 +122,11 @@ public class ProductDAO {
                     Product product = createProductFromCursor(cursor);
                     products.add(product);
                 }
-                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (cursor != null) cursor.close();
             close();
         }
 
@@ -112,17 +138,18 @@ public class ProductDAO {
         Product product = null;
         open();
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = database.query("products", null, "product_id = ?",
+            cursor = database.query("products", null, "product_id = ?",
                     new String[]{String.valueOf(productId)}, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 product = createProductFromCursor(cursor);
-                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (cursor != null) cursor.close();
             close();
         }
 
@@ -184,7 +211,7 @@ public class ProductDAO {
         return result;
     }
 
-    // Helper method để tạo Product từ Cursor
+    // Tạo đối tượng Product từ Cursor
     private Product createProductFromCursor(Cursor cursor) {
         Product product = new Product();
         product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow("product_id")));
@@ -199,7 +226,6 @@ public class ProductDAO {
         product.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("is_active")) == 1);
         product.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         product.setUpdatedAt(cursor.getString(cursor.getColumnIndexOrThrow("updated_at")));
-
         return product;
     }
 }
