@@ -54,31 +54,36 @@ public class ProductDAO {
 
     //Lây tất cả sản phẩm
     public List<Product> getAllProducts() {
-        List<Product> list = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Product", null);
-        if (cursor.moveToFirst()) {
-            do {
-                Product p = new Product();
-                p.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow("productId")));
-                p.setProductName(cursor.getString(cursor.getColumnIndexOrThrow("productName")));
-                p.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("description")));
-                p.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow("price")));
-                p.setBrand(cursor.getString(cursor.getColumnIndexOrThrow("brand")));
-                p.setMaterial(cursor.getString(cursor.getColumnIndexOrThrow("material")));
-                p.setImageUrl(cursor.getString(cursor.getColumnIndexOrThrow("imageUrl")));
-                p.setStockQuantity(cursor.getInt(cursor.getColumnIndexOrThrow("stockQuantity")));
-                p.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("isActive")) == 1);
-                p.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("createdAt")));
-                p.setUpdatedAt(cursor.getString(cursor.getColumnIndexOrThrow("updatedAt")));
-                p.setCategoryId(cursor.getInt(cursor.getColumnIndexOrThrow("categoryId")));
-                list.add(p);
-            } while (cursor.moveToNext());
+        List<Product> products = new ArrayList<>();
+        open(); // mở database
+
+        Cursor cursor = null;
+        try {
+            cursor = database.query(
+                    "products", // tên bảng
+                    null,       // lấy tất cả cột
+                    null,       // không có điều kiện WHERE
+                    null,
+                    null, null,
+                    "created_at DESC" // sắp xếp theo ngày tạo mới nhất
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Product product = createProductFromCursor(cursor);
+                    products.add(product);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+            close(); // đóng database
         }
-        cursor.close();
-        db.close();
-        return list;
+
+        return products;
     }
+
 
 
     // Lấy sản phẩm theo category

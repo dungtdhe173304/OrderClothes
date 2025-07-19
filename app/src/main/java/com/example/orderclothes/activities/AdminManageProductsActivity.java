@@ -115,8 +115,8 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
     }
 
     private void loadProducts() {
-        allProducts = productDAO.getAllActiveProducts(); // bạn có thể đổi thành getAllProducts() nếu cần cả đã ẩn
-      //  allProducts = productDAO.getAllProducts(); // Hàm này phải trả về cả sản phẩm isActive = falseallProducts = productDAO.getAllProducts(); // Hàm này phải trả về cả sản phẩm isActive = false
+      //  allProducts = productDAO.getAllActiveProducts(); // bạn có thể đổi thành getAllProducts() nếu cần cả đã ẩn
+        allProducts = productDAO.getAllProducts(); // Hàm này phải trả về cả sản phẩm isActive = falseallProducts = productDAO.getAllProducts(); // Hàm này phải trả về cả sản phẩm isActive = false
         filterAndSortProducts();
     }
 
