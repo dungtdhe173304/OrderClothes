@@ -152,8 +152,20 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
 
     @Override
     public void onDelete(Product product) {
-        // TODO: Xác nhận rồi xóa
-        Toast.makeText(this, "Xóa: " + product.getProductName(), Toast.LENGTH_SHORT).show();
+        new AlertDialog.Builder(this)
+                .setTitle("Xác nhận xoá")
+                .setMessage("Bạn có chắc muốn xoá sản phẩm \"" + product.getProductName() + "\"?")
+                .setPositiveButton("Xoá", (dialog, which) -> {
+                    int result = productDAO.deleteProduct(product.getProductId());
+                    if (result > 0) {
+                        Toast.makeText(this, "Đã xoá sản phẩm", Toast.LENGTH_SHORT).show();
+                        loadProducts(); // làm mới danh sách
+                    } else {
+                        Toast.makeText(this, "Lỗi khi xoá sản phẩm", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     @Override

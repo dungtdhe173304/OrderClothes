@@ -236,4 +236,20 @@ public class ProductDAO {
 
         return product;
     }
+
+    public int deleteProduct(int productId) {
+        int result = 0;
+        open();
+
+        try {
+            result = database.delete("products", "product_id = ?", new String[]{String.valueOf(productId)});
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return result;
+    }
+
 }
