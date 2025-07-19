@@ -109,12 +109,6 @@
                 android:padding="16dp"
                 android:layout_marginBottom="12dp">
 
-                <Button
-                    android:id="@+id/btnViewOrderHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Xem lịch sử giao dịch" />
-
             </LinearLayout>
 
             <!-- Danh sách tính năng -->
@@ -140,6 +134,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Đổi mật khẩu" />
+
+                <Button
+                    android:id="@+id/btnViewOrderHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Xem lịch sử giao dịch" />
 
             </LinearLayout>
 

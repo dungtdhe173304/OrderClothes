@@ -94,7 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues adminValues = new ContentValues();
         adminValues.put("username", "admin");
         adminValues.put("email", "admin@orderclothes.com");
-        adminValues.put("password", hashPassword("admin123"));
+        adminValues.put("password", hashPassword("admin123")); // Ensure hashing
         adminValues.put("full_name", "Administrator");
         adminValues.put("phone", "0123456789");
         adminValues.put("address", "Admin Address");
@@ -108,7 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues userValues = new ContentValues();
         userValues.put("username", "user123");
         userValues.put("email", "user@test.com");
-        userValues.put("password", hashPassword("123456"));
+        userValues.put("password", hashPassword("123456")); // Ensure hashing
         userValues.put("full_name", "Test User");
         userValues.put("phone", "0987654321");
         userValues.put("address", "123 Test Street");
