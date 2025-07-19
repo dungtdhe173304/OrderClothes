@@ -1,18 +1,21 @@
 package com.example.orderclothes.activities;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.database.Cursor; // Added import for Cursor
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.orderclothes.R;
@@ -21,16 +24,16 @@ import com.example.orderclothes.utils.SessionManager;
 import com.example.orderclothes.database.DatabaseHelper;
 import com.example.orderclothes.database.dao.UserDAO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import android.database.sqlite.SQLiteDatabase;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
-    TextView txtUsername, txtEmail;
-    EditText edtUsername, edtEmail, edtPhone, edtAddress;
-    Button btnEditInfo, btnSaveChanges, btnLogout, btnViewOrderHistory, btnChangePassword;
-    SessionManager session;
-    UserDAO userDAO;
+    private TextView txtUsername, txtEmail, txtPhone, txtAddress;
+    private EditText edtUsername, edtEmail, edtPhone, edtAddress;
+    private Button btnEditInfo, btnSave, btnLogout, btnViewOrderHistory, btnChangePassword;
+    private SessionManager session;
+    private UserDAO userDAO;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +43,14 @@ public class ProfileActivity extends AppCompatActivity {
         // Ánh xạ view
         txtUsername = findViewById(R.id.txtUsername);
         txtEmail = findViewById(R.id.txtEmail);
+        txtPhone = findViewById(R.id.txtPhone);
+        txtAddress = findViewById(R.id.txtAddress);
         edtUsername = findViewById(R.id.edtUsername);
         edtEmail = findViewById(R.id.edtEmail);
         edtPhone = findViewById(R.id.edtPhone);
         edtAddress = findViewById(R.id.edtAddress);
         btnEditInfo = findViewById(R.id.btnEditInfo);
-        btnSaveChanges = findViewById(R.id.btnSaveChanges);
+        btnSave = findViewById(R.id.btnSave);
         btnLogout = findViewById(R.id.btnLogout);
         btnViewOrderHistory = findViewById(R.id.btnViewOrderHistory);
         btnChangePassword = findViewById(R.id.btnChangePassword);
@@ -53,55 +58,53 @@ public class ProfileActivity extends AppCompatActivity {
         // Khởi tạo session và lấy thông tin user
         session = new SessionManager(this);
         userDAO = new UserDAO(this);
-        User user = session.getCurrentUser();
+        currentUser = session.getCurrentUser();
 
-        if (user != null) {
-            txtUsername.setText(user.getFullName());
-            txtEmail.setText(user.getEmail());
-            edtUsername.setText(user.getFullName());
-            edtEmail.setText(user.getEmail());
-            edtPhone.setText(user.getPhone());
-            edtAddress.setText(user.getAddress());
+        if (currentUser != null) {
+            displayUserInfo(currentUser);
+        } else {
+            Toast.makeText(this, "Không tìm thấy thông tin người dùng!", Toast.LENGTH_SHORT).show();
+            redirectToLogin();
+            return;
         }
 
         // Mở các trường chỉnh sửa khi nhấn nút "Chỉnh sửa thông tin"
         btnEditInfo.setOnClickListener(v -> {
-            edtUsername.setEnabled(true);
-            edtEmail.setEnabled(true);
-            edtPhone.setEnabled(true);
-            edtAddress.setEnabled(true);
+            // Hiển thị EditText với giá trị hiện tại và ẩn TextView
+            enableEditFields(true);
             txtUsername.setVisibility(View.GONE);
             txtEmail.setVisibility(View.GONE);
-            edtUsername.setVisibility(View.VISIBLE);
-            edtEmail.setVisibility(View.VISIBLE);
-            edtPhone.setVisibility(View.VISIBLE);
-            edtAddress.setVisibility(View.VISIBLE);
+            txtPhone.setVisibility(View.GONE);
+            txtAddress.setVisibility(View.GONE);
             btnEditInfo.setVisibility(View.GONE);
-            btnSaveChanges.setVisibility(View.VISIBLE);
+            btnSave.setVisibility(View.VISIBLE);
+            // Điền giá trị hiện tại vào EditText
+            edtUsername.setText(currentUser.getFullName());
+            edtEmail.setText(currentUser.getEmail());
+            edtPhone.setText(currentUser.getPhone());
+            edtAddress.setText(currentUser.getAddress());
         });
 
-        // Lưu thông tin thay đổi
-        btnSaveChanges.setOnClickListener(v -> {
-            String newUsername = edtUsername.getText().toString();
-            String newEmail = edtEmail.getText().toString();
-            String newPhone = edtPhone.getText().toString();
-            String newAddress = edtAddress.getText().toString();
-            updateUserInfo(newUsername, newEmail, newPhone, newAddress);
-            Toast.makeText(this, "Thông tin đã được cập nhật!", Toast.LENGTH_SHORT).show();
-            txtUsername.setText(newUsername);
-            txtEmail.setText(newEmail);
-            txtUsername.setVisibility(View.VISIBLE);
-            txtEmail.setVisibility(View.VISIBLE);
-            edtUsername.setVisibility(View.GONE);
-            edtEmail.setVisibility(View.GONE);
-            edtPhone.setVisibility(View.GONE);
-            edtAddress.setVisibility(View.GONE);
-            btnEditInfo.setVisibility(View.VISIBLE);
-            btnSaveChanges.setVisibility(View.GONE);
-            edtUsername.setEnabled(false);
-            edtEmail.setEnabled(false);
-            edtPhone.setEnabled(false);
-            edtAddress.setEnabled(false);
+        // Lưu thông tin thay đổi khi nhấn nút "Lưu"
+        btnSave.setOnClickListener(v -> {
+            String newUsername = edtUsername.getText().toString().trim();
+            String newEmail = edtEmail.getText().toString().trim();
+            String newPhone = edtPhone.getText().toString().trim();
+            String newAddress = edtAddress.getText().toString().trim();
+
+            if (validateUserInfo(newUsername, newEmail, newPhone, newAddress)) {
+                updateUserInfo(newUsername, newEmail, newPhone, newAddress);
+                Toast.makeText(this, "Thông tin đã được cập nhật!", Toast.LENGTH_SHORT).show();
+                // Cập nhật giao diện ngay lập tức với thông tin mới
+                displayUserInfo(currentUser);
+                enableEditFields(false); // Tắt chỉnh sửa
+                txtUsername.setVisibility(View.VISIBLE);
+                txtEmail.setVisibility(View.VISIBLE);
+                txtPhone.setVisibility(View.VISIBLE);
+                txtAddress.setVisibility(View.VISIBLE);
+                btnSave.setVisibility(View.GONE);
+                btnEditInfo.setVisibility(View.VISIBLE);
+            }
         });
 
         // Xử lý nút Đổi mật khẩu
@@ -149,6 +152,54 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void displayUserInfo(User user) {
+        txtUsername.setText(user.getFullName());
+        txtEmail.setText(user.getEmail());
+        txtPhone.setText(user.getPhone());
+        txtAddress.setText(user.getAddress());
+    }
+
+    private void enableEditFields(boolean enabled) {
+        edtUsername.setEnabled(enabled);
+        edtEmail.setEnabled(enabled);
+        edtPhone.setEnabled(enabled);
+        edtAddress.setEnabled(enabled);
+        edtUsername.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        edtEmail.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        edtPhone.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        edtAddress.setVisibility(enabled ? View.VISIBLE : View.GONE);
+    }
+
+    private boolean validateUserInfo(String username, String email, String phone, String address) {
+        if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
+            Toast.makeText(this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void updateUserInfo(String username, String email, String phone, String address) {
+        SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("full_name", username);
+        values.put("email", email);
+        values.put("phone", phone);
+        values.put("address", address);
+
+        int rowsAffected = db.update("users", values, "user_id = ?", new String[]{String.valueOf(currentUser.getUserId())});
+        db.close();
+
+        if (rowsAffected > 0) {
+            currentUser.setFullName(username);
+            currentUser.setEmail(email);
+            currentUser.setPhone(phone);
+            currentUser.setAddress(address);
+            session.createLoginSession(currentUser); // Cập nhật session
+        } else {
+            Toast.makeText(this, "Cập nhật thông tin thất bại!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showChangePasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -169,10 +220,7 @@ public class ProfileActivity extends AppCompatActivity {
                         updatePassword(oldPassword, newPassword);
                     }
                 })
-                .setNeutralButton("Quay lại", (dialog, which) -> {
-                    // Do nothing, just dismiss the dialog to return to ProfileActivity
-                    dialog.dismiss();
-                })
+                .setNeutralButton("Quay lại", (dialog, which) -> dialog.dismiss())
                 .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
 
         builder.create().show();
@@ -195,15 +243,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updatePassword(String oldPassword, String newPassword) {
-        User currentUser = session.getCurrentUser();
         if (currentUser != null) {
             String hashedOldPassword = userDAO.hashPassword(oldPassword);
             String hashedNewPassword = userDAO.hashPassword(newPassword);
-            Log.d(TAG, "Input Old Password: " + oldPassword);
-            Log.d(TAG, "Hashed Old Password: " + hashedOldPassword);
-            Log.d(TAG, "Stored Password (from Session): " + currentUser.getPassword());
 
-            // Fetch password directly from database to compare
             SQLiteDatabase db = DatabaseHelper.getInstance(this).getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT password FROM users WHERE user_id = ?", new String[]{String.valueOf(currentUser.getUserId())});
             String dbPassword = null;
@@ -212,9 +255,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
             cursor.close();
             db.close();
-            Log.d(TAG, "Stored Password (from Database): " + dbPassword);
 
-            if (hashedOldPassword.equals(currentUser.getPassword())) {
+            if (hashedOldPassword.equals(dbPassword)) {
                 ContentValues values = new ContentValues();
                 values.put("password", hashedNewPassword);
 
@@ -223,9 +265,9 @@ public class ProfileActivity extends AppCompatActivity {
                 dbUpdate.close();
 
                 if (rowsAffected > 0) {
-                    Toast.makeText(this, "Mật khẩu đã được cập nhật!", Toast.LENGTH_SHORT).show();
                     currentUser.setPassword(hashedNewPassword);
-                    session.createLoginSession(currentUser); // Cập nhật session
+                    session.createLoginSession(currentUser);
+                    Toast.makeText(this, "Mật khẩu đã được cập nhật!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Cập nhật mật khẩu thất bại!", Toast.LENGTH_SHORT).show();
                 }
@@ -235,22 +277,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUserInfo(String username, String email, String phone, String address) {
-        ContentValues values = new ContentValues();
-        values.put("username", username);
-        values.put("email", email);
-        values.put("phone", phone);
-        values.put("address", address);
-        SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
-        db.update("users", values, "user_id = ?", new String[]{String.valueOf(session.getCurrentUser().getUserId())});
-        db.close();
-
-        // Cập nhật session
-        User updatedUser = session.getCurrentUser();
-        updatedUser.setFullName(username);
-        updatedUser.setEmail(email);
-        updatedUser.setPhone(phone);
-        updatedUser.setAddress(address);
-        session.createLoginSession(updatedUser);
+    private void redirectToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

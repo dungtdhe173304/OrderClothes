@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -43,6 +44,22 @@
                 <!-- Hiển thị email -->
                 <TextView
                     android:id="@+id/txtEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Hiển thị số điện thoại -->
+                <TextView
+                    android:id="@+id/txtPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Hiển thị địa chỉ -->
+                <TextView
+                    android:id="@+id/txtAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
@@ -95,6 +112,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sửa thông tin"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Nút Lưu (ẩn ban đầu) -->
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lưu"
+                    android:visibility="gone"
                     android:layout_marginTop="8dp" />
 
             </LinearLayout>
@@ -153,13 +179,6 @@
                 android:textColor="#FFFFFF"
                 android:elevation="2dp" />
 
-            <!-- Lưu thông tin (Initially hidden) -->
-            <Button
-                android:id="@+id/btnSaveChanges"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lưu thay đổi"
-                android:visibility="gone" /> <!-- Hidden initially -->
         </LinearLayout>
     </ScrollView>
 
