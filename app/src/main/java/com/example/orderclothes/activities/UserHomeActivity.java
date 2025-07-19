@@ -22,7 +22,6 @@ import com.example.orderclothes.models.Category;
 import com.example.orderclothes.models.Product;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
-import com.example.orderclothes.activities.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +58,9 @@ public class UserHomeActivity extends AppCompatActivity implements
         loadData();
         setupListeners();
         setupBottomNavigation();
+
+        // Ensure the "Home" item is selected when this activity is created
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
     private void initViews() {
@@ -200,27 +202,25 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void setupBottomNavigation() {
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-
-                if (itemId == R.id.nav_home) {
-                    return true;
-                } else if (itemId == R.id.nav_cart) {
-                    startActivity(new Intent(UserHomeActivity.this, CartActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_voucher) {
-                    return true;
-                } else if (itemId == R.id.nav_orders) {
-                    Toast.makeText(UserHomeActivity.this, "Orders - Coming soon", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.nav_profile) {
-                    openProfile();
-                    return true;
-                }
-                return false;
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                // Already in UserHomeActivity, no action needed
+                return true;
+            } else if (itemId == R.id.nav_cart) {
+                startActivity(new Intent(UserHomeActivity.this, CartActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_voucher) {
+                Toast.makeText(this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_orders) {
+                Toast.makeText(this, "Orders - Coming soon", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                openProfile();
+                return true;
             }
+            return false;
         });
     }
 
@@ -278,5 +278,12 @@ public class UserHomeActivity extends AppCompatActivity implements
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Ensure the "Home" item is selected when the activity starts
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 }
