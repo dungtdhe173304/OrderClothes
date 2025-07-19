@@ -12,6 +12,8 @@ public class SessionManager {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_FULL_NAME = "fullName";
+    private static final String KEY_PHONE = "phone";
+    private static final String KEY_ADDRESS = "address";
     private static final String KEY_ROLE = "role";
 
     private final SharedPreferences pref;
@@ -31,8 +33,10 @@ public class SessionManager {
         editor.putString(KEY_USERNAME, user.getUsername());
         editor.putString(KEY_EMAIL, user.getEmail());
         editor.putString(KEY_FULL_NAME, user.getFullName());
-        editor.putString(KEY_ROLE, user.getRole() != null ? user.getRole() : "user");
-        editor.apply();
+        editor.putString(KEY_PHONE, user.getPhone()); // Lưu số điện thoại
+        editor.putString(KEY_ADDRESS, user.getAddress()); // Lưu địa chỉ
+        editor.putString(KEY_ROLE, user.getRole() != null ? user.getRole() : "user"); // mặc định user
+        editor.apply(); // apply để thực hiện async
     }
 
     // ✅ Kiểm tra đã đăng nhập chưa
@@ -49,6 +53,8 @@ public class SessionManager {
         user.setUsername(pref.getString(KEY_USERNAME, ""));
         user.setEmail(pref.getString(KEY_EMAIL, ""));
         user.setFullName(pref.getString(KEY_FULL_NAME, ""));
+        user.setPhone(pref.getString(KEY_PHONE, "")); // Lấy số điện thoại
+        user.setAddress(pref.getString(KEY_ADDRESS, "")); // Lấy địa chỉ
         user.setRole(pref.getString(KEY_ROLE, "user"));
         return user;
     }

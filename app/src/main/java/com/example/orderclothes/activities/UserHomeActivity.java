@@ -21,6 +21,7 @@ import com.example.orderclothes.models.Category;
 import com.example.orderclothes.models.Product;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
+import com.example.orderclothes.activities.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.List;
@@ -209,9 +210,12 @@ public class UserHomeActivity extends AppCompatActivity implements
                     Toast.makeText(UserHomeActivity.this, "Cart - Coming soon", Toast.LENGTH_SHORT).show();
                     return true;
                 } else if (itemId == R.id.nav_voucher) {
+
+
                     Toast.makeText(UserHomeActivity.this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
                 } else if (itemId == R.id.nav_voucher) {
                     Toast.makeText(UserHomeActivity.this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
+
                     return true;
                 } else if (itemId == R.id.nav_orders) {
                     Toast.makeText(UserHomeActivity.this, "Orders - Coming soon", Toast.LENGTH_SHORT).show();
@@ -226,8 +230,8 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void openProfile() {
-        // TODO: Create ProfileActivity
-        Toast.makeText(this, "Profile - Coming soon", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(UserHomeActivity.this, ProfileActivity.class);
+        startActivity(intent);
     }
 
     private void redirectToLogin() {
