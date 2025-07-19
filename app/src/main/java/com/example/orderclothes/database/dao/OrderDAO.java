@@ -4,21 +4,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.example.orderclothes.database.DatabaseHelper;
 import com.example.orderclothes.models.Order;
 import com.example.orderclothes.models.OrderItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO {
-    private DatabaseHelper dbHelper;
+    private final SQLiteDatabase db;
 
     public OrderDAO(Context context) {
-        dbHelper = DatabaseHelper.getInstance(context);
+        db = DatabaseHelper.getInstance(context).getWritableDatabase();
     }
 
     public long insertOrder(Order order) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("order_number", order.getOrderNumber());
         values.put("user_id", order.getUserId());
@@ -30,13 +31,10 @@ public class OrderDAO {
         values.put("shipping_address", order.getShippingAddress());
         values.put("status", order.getStatus());
 
-        long id = db.insert("orders", null, values);
-        db.close();
-        return id;
+        return db.insert("orders", null, values);
     }
 
     public void insertOrderItems(List<OrderItem> orderItems) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         for (OrderItem item : orderItems) {
             ContentValues values = new ContentValues();
             values.put("order_id", item.getOrderId());
@@ -49,12 +47,10 @@ public class OrderDAO {
             values.put("total_price", item.getTotalPrice());
             db.insert("order_items", null, values);
         }
-        db.close();
     }
 
     public List<Order> getOrdersByUserId(int userId) {
         List<Order> orders = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
@@ -74,13 +70,11 @@ public class OrderDAO {
             orders.add(order);
         }
         cursor.close();
-        db.close();
         return orders;
     }
 
-    private List<OrderItem> getOrderItemsByOrderId(int orderId) {
+    public List<OrderItem> getOrderItemsByOrderId(int orderId) {
         List<OrderItem> orderItems = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT * FROM order_items WHERE order_id = ?";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
 
@@ -99,5 +93,34 @@ public class OrderDAO {
         }
         cursor.close();
         return orderItems;
+    }
+
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT * FROM orders ORDER BY order_date DESC", null);
+        if (cursor.moveToFirst()) {
+            do {
+                Order order = new Order(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("order_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("order_number")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("customer_name")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("customer_phone")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("shipping_address")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("subtotal")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("shipping_fee")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("status"))
+                );
+                orders.add(order);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return orders;
+    }
+
+    public void updateOrderStatus(int orderId, String newStatus) {
+        ContentValues values = new ContentValues();
+        values.put("status", newStatus);
+        db.update("orders", values, "order_id = ?", new String[]{String.valueOf(orderId)});
     }
 }

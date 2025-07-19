@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,33 +15,49 @@
         android:theme="@style/Theme.OrderClothes"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ManageOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ManageUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ManageUserActivity"
+            android:exported="false"
+            tools:ignore="DuplicateActivity" />
+        <activity
+            android:name=".DialogAddEditProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ItemAdminProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminManageProductsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.UserHomeActivity"
             android:exported="false" />
-
         <activity
             android:name=".activities.AdminDashboardActivity"
             android:exported="false" />
-
         <activity
             android:name=".activities.RegisterActivity"
             android:exported="false" />
-
         <activity
             android:name=".activities.ProductDetailActivity"
             android:exported="false" />
-
         <activity
             android:name=".activities.CartActivity"
             android:exported="false" />
+
 
         <activity
             android:name=".activities.ProfileActivity"
