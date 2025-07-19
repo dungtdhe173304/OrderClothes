@@ -50,6 +50,20 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
         setupListeners();
         loadCategories();
         loadProducts();
+
+        // Gán dữ liệu cho Spinner sắp xếp
+        List<String> sortOptions = Arrays.asList(
+                "Không sắp xếp",
+                "Giá tăng dần",
+                "Giá giảm dần",
+                "Số lượng tăng dần",
+                "Số lượng giảm dần"
+        );
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_dropdown_item, sortOptions
+        );
+        spnSortOption.setAdapter(sortAdapter);
+
     }
 
     private void initViews() {
@@ -135,11 +149,23 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
             }
         }
 
-        // Sorting
-        if (sortPos == 1) filtered.sort(Comparator.comparingDouble(Product::getPrice));
-        else if (sortPos == 2) filtered.sort((p1, p2) -> Double.compare(p2.getPrice(), p1.getPrice()));
-        else if (sortPos == 3) filtered.sort(Comparator.comparingInt(Product::getStockQuantity));
-        else if (sortPos == 4) filtered.sort((p1, p2) -> Integer.compare(p2.getStockQuantity(), p1.getStockQuantity()));
+        /// Sắp xếp theo tùy chọn
+        switch (sortPos) {
+            case 1: // Giá tăng dần
+                filtered.sort(Comparator.comparingDouble(Product::getPrice));
+                break;
+            case 2: // Giá giảm dần
+                filtered.sort((p1, p2) -> Double.compare(p2.getPrice(), p1.getPrice()));
+                break;
+            case 3: // Số lượng tăng dần
+                filtered.sort(Comparator.comparingInt(Product::getStockQuantity));
+                break;
+            case 4: // Số lượng giảm dần
+                filtered.sort((p1, p2) -> Integer.compare(p2.getStockQuantity(), p1.getStockQuantity()));
+                break;
+            default:
+                break;
+        }
 
         adapter.updateProducts(filtered);
     }
