@@ -29,7 +29,7 @@ public class ProductDAO {
         }
     }
 
-    // ✅ Thêm: Lấy tổng số sản phẩm đang hoạt động (is_active = 1)
+    // Lấy tổng số sản phẩm đang hoạt động
     public int getTotalProducts() {
         int count = 0;
         open();
@@ -54,11 +54,10 @@ public class ProductDAO {
     public List<Product> getAllActiveProducts() {
         List<Product> products = new ArrayList<>();
         open();
-
         Cursor cursor = null;
+
         try {
-            cursor = database.query("products", null, "is_active = 1",
-                    null, null, null, "created_at DESC");
+            cursor = database.query("products", null, "is_active = 1", null, null, null, "created_at DESC");
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -76,12 +75,37 @@ public class ProductDAO {
         return products;
     }
 
+    // Lấy tất cả sản phẩm (bao gồm cả không active)
+    public List<Product> getAllProducts() {
+        List<Product> products = new ArrayList<>();
+        open();
+        Cursor cursor = null;
+
+        try {
+            cursor = database.query("products", null, null, null, null, null, "created_at DESC");
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Product product = createProductFromCursor(cursor);
+                    products.add(product);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+            close();
+        }
+
+        return products;
+    }
+
     // Lấy sản phẩm theo category
     public List<Product> getProductsByCategory(int categoryId) {
         List<Product> products = new ArrayList<>();
         open();
-
         Cursor cursor = null;
+
         try {
             cursor = database.query("products", null,
                     "category_id = ? AND is_active = 1",
@@ -108,14 +132,13 @@ public class ProductDAO {
     public List<Product> searchProducts(String keyword) {
         List<Product> products = new ArrayList<>();
         open();
-
         Cursor cursor = null;
+
         try {
             String selection = "(product_name LIKE ? OR brand LIKE ?) AND is_active = 1";
             String[] selectionArgs = {"%" + keyword + "%", "%" + keyword + "%"};
 
-            cursor = database.query("products", null, selection, selectionArgs,
-                    null, null, "created_at DESC");
+            cursor = database.query("products", null, selection, selectionArgs, null, null, "created_at DESC");
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -137,8 +160,8 @@ public class ProductDAO {
     public Product getProductById(int productId) {
         Product product = null;
         open();
-
         Cursor cursor = null;
+
         try {
             cursor = database.query("products", null, "product_id = ?",
                     new String[]{String.valueOf(productId)}, null, null, null);
@@ -211,7 +234,23 @@ public class ProductDAO {
         return result;
     }
 
-    // Tạo đối tượng Product từ Cursor
+    // Xoá sản phẩm theo ID
+    public int deleteProduct(int productId) {
+        int result = 0;
+        open();
+
+        try {
+            result = database.delete("products", "product_id = ?", new String[]{String.valueOf(productId)});
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close();
+        }
+
+        return result;
+    }
+
+    // Helper: Tạo đối tượng Product từ Cursor
     private Product createProductFromCursor(Cursor cursor) {
         Product product = new Product();
         product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow("product_id")));

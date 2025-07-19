@@ -23,13 +23,12 @@ import com.example.orderclothes.utils.SessionManager;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
-    private TextView tvTotalProducts, tvTotalOrders, tvTotalUsers, tvRevenue;
+    private TextView tvWelcome, tvTotalProducts, tvTotalOrders, tvTotalUsers, tvRevenue;
     private CardView cardManageProducts, cardManageOrders, cardManageUsers, cardReports;
 
     private SessionManager sessionManager;
     private User currentUser;
     private UserDAO userDAO;
-
     private ProductDAO productDAO;
 
     private final ActivityResultLauncher<Intent> userManageLauncher =
@@ -52,6 +51,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        tvWelcome = findViewById(R.id.tvWelcome);
         tvTotalProducts = findViewById(R.id.tvTotalProducts);
         tvTotalOrders = findViewById(R.id.tvTotalOrders);
         tvTotalUsers = findViewById(R.id.tvTotalUsers);
@@ -69,8 +69,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
         userDAO = new UserDAO(this);
         productDAO = new ProductDAO(this);
 
+        // Kiểm tra session và quyền admin
         if (currentUser == null || !currentUser.isAdmin()) {
             redirectToLogin();
+            return;
         }
     }
 
@@ -84,10 +86,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
 
     private void loadDashboardData() {
-        int totalUsers = userDAO.getAllUsers().size(); // ✅ Lấy đúng từ DB
+        int totalUsers = userDAO.getAllUsers().size();
         tvTotalUsers.setText(String.valueOf(totalUsers));
 
-        // Tạm thời dùng dữ liệu giả
         int totalProducts = productDAO.getTotalProducts();
         tvTotalProducts.setText(String.valueOf(totalProducts));
 
@@ -103,7 +104,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private void setClickListeners() {
         cardManageProducts.setOnClickListener(v -> {
-            Toast.makeText(this, "Đang phát triển - Quản lý sản phẩm", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, AdminManageProductsActivity.class));
         });
 
         cardManageOrders.setOnClickListener(v -> {
@@ -112,11 +113,12 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         cardManageUsers.setOnClickListener(v -> {
             Intent intent = new Intent(this, ManageUserActivity.class);
-            userManageLauncher.launch(intent); // 👈 Lắng nghe kết quả quay về
+            userManageLauncher.launch(intent);
         });
 
         cardReports.setOnClickListener(v -> {
             Toast.makeText(this, "Đang phát triển - Báo cáo thống kê", Toast.LENGTH_SHORT).show();
+            // Có thể chuyển đến activity khác nếu có
         });
     }
 

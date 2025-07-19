@@ -25,6 +25,15 @@
             android:exported="false"
             tools:ignore="DuplicateActivity" />
         <activity
+            android:name=".DialogAddEditProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ItemAdminProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminManageProductsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -41,6 +50,12 @@
             android:exported="false" />
         <activity
             android:name=".activities.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CartActivity"
             android:exported="false" />
     </application>
 

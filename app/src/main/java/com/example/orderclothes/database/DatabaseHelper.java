@@ -215,7 +215,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("total_price", unitPrice * quantity);
         db.insert("order_items", null, values);
     }
-
     // Helper method để insert product
     private void insertProduct(SQLiteDatabase db, String name, String description, double price,
                                int categoryId, String brand, String material, String imageUrl, int stock) {

@@ -34,6 +34,23 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
+    //ADMIN MANAGE
+    public Product(String productName, String description, double price,
+                   String brand, int stockQuantity, int categoryId, String imageUrl, boolean isActive) {
+        this.productName = productName;
+        this.description = description;
+        this.price = price;
+        this.brand = brand;
+        this.stockQuantity = stockQuantity;
+        this.categoryId = categoryId;
+        this.imageUrl = imageUrl;
+        this.isActive = isActive;
+        this.material = ""; // gán rỗng hoặc tùy ý
+        this.createdAt = "";
+        this.updatedAt = "";
+    }
+
+
     // Getters and Setters
     public int getProductId() {
         return productId;
