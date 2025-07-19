@@ -52,6 +52,35 @@ public class ProductDAO {
         return products;
     }
 
+    //Lây tất cả sản phẩm
+    public List<Product> getAllProducts() {
+        List<Product> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Product", null);
+        if (cursor.moveToFirst()) {
+            do {
+                Product p = new Product();
+                p.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow("productId")));
+                p.setProductName(cursor.getString(cursor.getColumnIndexOrThrow("productName")));
+                p.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("description")));
+                p.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow("price")));
+                p.setBrand(cursor.getString(cursor.getColumnIndexOrThrow("brand")));
+                p.setMaterial(cursor.getString(cursor.getColumnIndexOrThrow("material")));
+                p.setImageUrl(cursor.getString(cursor.getColumnIndexOrThrow("imageUrl")));
+                p.setStockQuantity(cursor.getInt(cursor.getColumnIndexOrThrow("stockQuantity")));
+                p.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("isActive")) == 1);
+                p.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("createdAt")));
+                p.setUpdatedAt(cursor.getString(cursor.getColumnIndexOrThrow("updatedAt")));
+                p.setCategoryId(cursor.getInt(cursor.getColumnIndexOrThrow("categoryId")));
+                list.add(p);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+
     // Lấy sản phẩm theo category
     public List<Product> getProductsByCategory(int categoryId) {
         List<Product> products = new ArrayList<>();

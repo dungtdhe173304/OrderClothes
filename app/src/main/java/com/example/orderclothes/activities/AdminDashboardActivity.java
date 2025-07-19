@@ -84,9 +84,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private void setClickListeners() {
         cardManageProducts.setOnClickListener(v -> {
             // Chuyển đến quản lý sản phẩm
-            Toast.makeText(this, "Đang phát triển - Quản lý sản phẩm", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this, ManageProductsActivity.class);
-            // startActivity(intent);
+           // Toast.makeText(this, "Đang phát triển - Quản lý sản phẩm", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AdminManageProductsActivity.class);
+            startActivity(intent);
         });
 
         cardManageOrders.setOnClickListener(v -> {
