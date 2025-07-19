@@ -8,6 +8,8 @@ import com.example.orderclothes.models.User;
 import com.example.orderclothes.database.DatabaseHelper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
     private DatabaseHelper dbHelper;
