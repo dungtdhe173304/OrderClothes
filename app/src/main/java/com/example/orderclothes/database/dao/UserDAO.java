@@ -8,6 +8,8 @@ import com.example.orderclothes.models.User;
 import com.example.orderclothes.database.DatabaseHelper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
     private DatabaseHelper dbHelper;
@@ -99,11 +101,11 @@ public class UserDAO {
         return exists;
     }
 
-    // Mã hóa password bằng SHA-256
-    private String hashPassword(String password) {
+    // Mã hóa password bằng SHA-256 với UTF-8 encoding
+    public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes());
+            byte[] hash = digest.digest(password.getBytes("UTF-8")); // Explicit UTF-8
             StringBuilder hexString = new StringBuilder();
 
             for (byte b : hash) {
@@ -115,7 +117,7 @@ public class UserDAO {
             }
 
             return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
             return password;
         }

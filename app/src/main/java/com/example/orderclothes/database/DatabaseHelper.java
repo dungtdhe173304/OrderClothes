@@ -13,15 +13,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Singleton pattern
     private static DatabaseHelper instance;
 
+    // Thay đổi từ private constructor thành public
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
     public static synchronized DatabaseHelper getInstance(Context context) {
         if (instance == null) {
             instance = new DatabaseHelper(context.getApplicationContext());
         }
         return instance;
-    }
-
-    private DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -49,12 +50,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Tạo bảng product_sizes
         db.execSQL(CREATE_TABLE_PRODUCT_SIZES);
 
-        // Tạo bảng vouchers
-        db.execSQL(CREATE_TABLE_VOUCHERS);
-
-        // Tạo bảng user_vouchers
-        db.execSQL(CREATE_TABLE_USER_VOUCHERS);
-
         // Tạo bảng cart
         db.execSQL(CREATE_TABLE_CART);
 
@@ -73,8 +68,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS orders");
         db.execSQL("DROP TABLE IF EXISTS cart_items");
         db.execSQL("DROP TABLE IF EXISTS cart");
-        db.execSQL("DROP TABLE IF EXISTS user_vouchers");
-        db.execSQL("DROP TABLE IF EXISTS vouchers");
         db.execSQL("DROP TABLE IF EXISTS product_sizes");
         db.execSQL("DROP TABLE IF EXISTS products");
         db.execSQL("DROP TABLE IF EXISTS categories");
@@ -101,7 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues adminValues = new ContentValues();
         adminValues.put("username", "admin");
         adminValues.put("email", "admin@orderclothes.com");
-        adminValues.put("password", hashPassword("admin123"));
+        adminValues.put("password", hashPassword("admin123")); // Ensure hashing
         adminValues.put("full_name", "Administrator");
         adminValues.put("phone", "0123456789");
         adminValues.put("address", "Admin Address");
@@ -115,7 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues userValues = new ContentValues();
         userValues.put("username", "user123");
         userValues.put("email", "user@test.com");
-        userValues.put("password", hashPassword("123456"));
+        userValues.put("password", hashPassword("123456")); // Ensure hashing
         userValues.put("full_name", "Test User");
         userValues.put("phone", "0987654321");
         userValues.put("address", "123 Test Street");
@@ -154,7 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Quần jean
         insertProduct(db, "Quần jean nam slim fit", "Quần jean nam ôm vừa phải", 599000, 3, "Levi's", "Denim", "https://kenh14cdn.com/203336854389633024/2025/6/29/48427799012203294996640565770072566130465660n-1751213367694-1751213367933736583458.jpg", 40);
-        insertProduct(db, "Quần jean nữ skinny", "Quần jean nữ ôm sát chân", 549000, 3, "Zara", "Denim stretch", "jhttps://kenh14cdn.com/203336854389633024/2025/6/29/48427799012203294996640565770072566130465660n-1751213367694-1751213367933736583458.jpg", 35);
+        insertProduct(db, "Quần jean nữ skinny", "Quần jean nữ ôm sát chân", 549000, 3, "Zara", "Denim stretch", "https://kenh14cdn.com/203336854389633024/2025/6/29/48427799012203294996640565770072566130465660n-1751213367694-1751213367933736583458.jpg", 35);
 
         // Váy đầm
         insertProduct(db, "Váy đầm maxi hoa", "Váy đầm dài họa tiết hoa", 699000, 5, "Mango", "Chiffon", "https://kenh14cdn.com/203336854389633024/2025/6/29/48427799012203294996640565770072566130465660n-1751213367694-1751213367933736583458.jpg", 15);
@@ -217,7 +210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // SQL tạo bảng users (cập nhật thêm role)
+    // SQL tạo bảng users
     private static final String CREATE_TABLE_USERS =
             "CREATE TABLE users (" +
                     "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -266,53 +259,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "stock_quantity INTEGER DEFAULT 0, " +
                     "FOREIGN KEY (product_id) REFERENCES products(product_id))";
 
-    // SQL tạo bảng vouchers
-    private static final String CREATE_TABLE_VOUCHERS =
-            "CREATE TABLE vouchers (" +
-                    "voucher_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "voucher_code TEXT UNIQUE NOT NULL, " +
-                    "voucher_name TEXT NOT NULL, " +
-                    "description TEXT, " +
-                    "discount_type TEXT NOT NULL, " +
-                    "discount_value REAL NOT NULL, " +
-                    "min_order_amount REAL DEFAULT 0, " +
-                    "max_discount_amount REAL, " +
-                    "usage_limit INTEGER DEFAULT 1, " +
-                    "used_count INTEGER DEFAULT 0, " +
-                    "start_date DATETIME NOT NULL, " +
-                    "end_date DATETIME NOT NULL, " +
-                    "is_active INTEGER DEFAULT 1, " +
-                    "created_at DATETIME DEFAULT CURRENT_TIMESTAMP)";
-
-    // SQL tạo bảng user_vouchers
-    private static final String CREATE_TABLE_USER_VOUCHERS =
-            "CREATE TABLE user_vouchers (" +
-                    "user_voucher_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "user_id INTEGER, " +
-                    "voucher_id INTEGER, " +
-                    "status TEXT DEFAULT 'available', " +
-                    "used_at DATETIME, " +
-                    "order_id INTEGER, " +
-                    "received_at DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                    "FOREIGN KEY (user_id) REFERENCES users(user_id), " +
-                    "FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id), " +
-                    "FOREIGN KEY (order_id) REFERENCES orders(order_id), " +
-                    "UNIQUE(user_id, voucher_id))";
-
     // SQL tạo bảng cart
     private static final String CREATE_TABLE_CART =
             "CREATE TABLE cart (" +
                     "cart_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "user_id INTEGER UNIQUE, " +
                     "subtotal REAL DEFAULT 0.0, " +
-                    "voucher_id INTEGER, " +
-                    "discount_amount REAL DEFAULT 0.0, " +
                     "shipping_fee REAL DEFAULT 0.0, " +
                     "total_amount REAL DEFAULT 0.0, " +
                     "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                     "updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                    "FOREIGN KEY (user_id) REFERENCES users(user_id), " +
-                    "FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id))";
+                    "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 
     // SQL tạo bảng cart_items
     private static final String CREATE_TABLE_CART_ITEMS =
@@ -338,9 +295,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "user_id INTEGER, " +
                     "order_date DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                     "subtotal REAL NOT NULL, " +
-                    "voucher_id INTEGER, " +
-                    "voucher_code TEXT, " +
-                    "discount_amount REAL DEFAULT 0.0, " +
                     "shipping_fee REAL DEFAULT 0.0, " +
                     "total_amount REAL NOT NULL, " +
                     "customer_name TEXT NOT NULL, " +
@@ -350,8 +304,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "notes TEXT, " +
                     "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                     "updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                    "FOREIGN KEY (user_id) REFERENCES users(user_id), " +
-                    "FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id))";
+                    "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 
     // SQL tạo bảng order_items
     private static final String CREATE_TABLE_ORDER_ITEMS =
