@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "order_clothes.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Singleton pattern
     private static DatabaseHelper instance;
