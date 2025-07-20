@@ -1,76 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp"
+    android:background="@drawable/dialog_background">
 
+    <!-- Header -->
     <TextView
-        android:id="@+id/tvOrderTotal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="#000"
+        android:text="Xác nhận đơn hàng"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
         android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
         android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:id="@+id/tvRecipientName"
+    <!-- Order Total -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#000"
-        android:layout_marginBottom="8dp" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/tvRecipientAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#000"
-        android:layout_marginBottom="8dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tổng tiền:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333" />
 
-    <TextView
-        android:id="@+id/tvRecipientPhone"
+        <TextView
+            android:id="@+id/tvOrderTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
+            android:text="0 VNĐ" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#000"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
         android:layout_marginBottom="16dp" />
 
+    <!-- Recipient Info Section -->
     <TextView
-        android:id="@+id/tvOrderNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="#666"
-        android:gravity="center"
-        android:layout_marginBottom="16dp" />
+        android:text="Thông tin người nhận"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#333"
+        android:layout_marginBottom="12dp" />
 
+    <!-- Recipient Name -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_person"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            app:tint="#666" />
+
+        <TextView
+            android:id="@+id/tvRecipientName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:textColor="#333"
+            android:text="Tên người nhận" />
+    </LinearLayout>
+
+    <!-- Recipient Address -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_location"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            app:tint="#666" />
+
+        <TextView
+            android:id="@+id/tvRecipientAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:textColor="#333"
+            android:text="Địa chỉ giao hàng" />
+    </LinearLayout>
+
+    <!-- Recipient Phone -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_phone"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            app:tint="#666" />
+
+        <TextView
+            android:id="@+id/tvRecipientPhone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:textColor="#333"
+            android:text="Số điện thoại" />
+    </LinearLayout>
+
+    <!-- Order Note -->
+    <LinearLayout
+        android:id="@+id/layoutOrderNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_note"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            app:tint="#666" />
+
+        <TextView
+            android:id="@+id/tvOrderNote"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="#666"
+            android:text="Ghi chú đơn hàng" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelOrder"
-            android:layout_width="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Hủy"
             android:textAllCaps="false"
-            android:textColor="#fff"
-            android:backgroundTint="#757575"
-            android:layout_marginEnd="16dp" />
+            android:textColor="#757575"
+            android:layout_marginEnd="8dp"
+            app:strokeColor="#757575"
+            app:strokeWidth="1dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirmOrder"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Xác nhận"
+            android:layout_weight="1"
+            android:text="Xác nhận đặt hàng"
             android:textAllCaps="false"
             android:textColor="#fff"
-            android:backgroundTint="@color/colorPrimary" />
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="8dp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.database.Cursor;
@@ -24,13 +25,25 @@ import com.example.orderclothes.utils.SessionManager;
 import com.example.orderclothes.database.DatabaseHelper;
 import com.example.orderclothes.database.dao.UserDAO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
+
+    // TextViews hiển thị thông tin
     private TextView txtUsername, txtEmail, txtPhone, txtAddress;
+
+    // EditTexts chỉnh sửa thông tin
     private EditText edtUsername, edtEmail, edtPhone, edtAddress;
-    private Button btnEditInfo, btnSave, btnLogout, btnViewOrderHistory, btnChangePassword;
+
+    // Layouts container
+    private LinearLayout layoutDisplayInfo, layoutEditInfo;
+
+    // Buttons
+    private MaterialButton btnEditInfo, btnSave, btnCancel;
+    private MaterialButton btnLogout, btnViewOrderHistory, btnChangePassword;
+
     private SessionManager session;
     private UserDAO userDAO;
     private User currentUser;
@@ -40,21 +53,39 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Ánh xạ view
+        initViews();
+        initData();
+        setupClickListeners();
+        setupBottomNavigation();
+    }
+
+    private void initViews() {
+        // TextViews hiển thị
         txtUsername = findViewById(R.id.txtUsername);
         txtEmail = findViewById(R.id.txtEmail);
         txtPhone = findViewById(R.id.txtPhone);
         txtAddress = findViewById(R.id.txtAddress);
+
+        // EditTexts chỉnh sửa
         edtUsername = findViewById(R.id.edtUsername);
         edtEmail = findViewById(R.id.edtEmail);
         edtPhone = findViewById(R.id.edtPhone);
         edtAddress = findViewById(R.id.edtAddress);
+
+        // Layouts
+        layoutDisplayInfo = findViewById(R.id.layoutDisplayInfo);
+        layoutEditInfo = findViewById(R.id.layoutEditInfo);
+
+        // Buttons
         btnEditInfo = findViewById(R.id.btnEditInfo);
         btnSave = findViewById(R.id.btnSave);
+        btnCancel = findViewById(R.id.btnCancel);
         btnLogout = findViewById(R.id.btnLogout);
         btnViewOrderHistory = findViewById(R.id.btnViewOrderHistory);
         btnChangePassword = findViewById(R.id.btnChangePassword);
+    }
 
+    private void initData() {
         // Khởi tạo session và lấy thông tin user
         session = new SessionManager(this);
         userDAO = new UserDAO(this);
@@ -65,27 +96,30 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Không tìm thấy thông tin người dùng!", Toast.LENGTH_SHORT).show();
             redirectToLogin();
-            return;
         }
+    }
 
-        // Mở các trường chỉnh sửa khi nhấn nút "Chỉnh sửa thông tin"
+    private void setupClickListeners() {
+        // Nút "Sửa thông tin"
         btnEditInfo.setOnClickListener(v -> {
-            // Hiển thị EditText với giá trị hiện tại và ẩn TextView
-            enableEditFields(true);
-            txtUsername.setVisibility(View.GONE);
-            txtEmail.setVisibility(View.GONE);
-            txtPhone.setVisibility(View.GONE);
-            txtAddress.setVisibility(View.GONE);
-            btnEditInfo.setVisibility(View.GONE);
-            btnSave.setVisibility(View.VISIBLE);
-            // Điền giá trị hiện tại vào EditText
+            // Ẩn phần hiển thị
+            layoutDisplayInfo.setVisibility(View.GONE);
+            // Hiện phần chỉnh sửa
+            layoutEditInfo.setVisibility(View.VISIBLE);
+
+            // Copy dữ liệu hiện tại vào EditText
             edtUsername.setText(currentUser.getFullName());
             edtEmail.setText(currentUser.getEmail());
             edtPhone.setText(currentUser.getPhone());
             edtAddress.setText(currentUser.getAddress());
+
+            // Thay đổi buttons
+            btnEditInfo.setVisibility(View.GONE);
+            btnSave.setVisibility(View.VISIBLE);
+            btnCancel.setVisibility(View.VISIBLE);
         });
 
-        // Lưu thông tin thay đổi khi nhấn nút "Lưu"
+        // Nút "Lưu"
         btnSave.setOnClickListener(v -> {
             String newUsername = edtUsername.getText().toString().trim();
             String newEmail = edtEmail.getText().toString().trim();
@@ -95,27 +129,28 @@ public class ProfileActivity extends AppCompatActivity {
             if (validateUserInfo(newUsername, newEmail, newPhone, newAddress)) {
                 updateUserInfo(newUsername, newEmail, newPhone, newAddress);
                 Toast.makeText(this, "Thông tin đã được cập nhật!", Toast.LENGTH_SHORT).show();
-                // Cập nhật giao diện ngay lập tức với thông tin mới
+
+                // Cập nhật hiển thị và quay về chế độ xem
                 displayUserInfo(currentUser);
-                enableEditFields(false); // Tắt chỉnh sửa
-                txtUsername.setVisibility(View.VISIBLE);
-                txtEmail.setVisibility(View.VISIBLE);
-                txtPhone.setVisibility(View.VISIBLE);
-                txtAddress.setVisibility(View.VISIBLE);
-                btnSave.setVisibility(View.GONE);
-                btnEditInfo.setVisibility(View.VISIBLE);
+                switchToViewMode();
             }
         });
 
-        // Xử lý nút Đổi mật khẩu
+        // Nút "Hủy"
+        btnCancel.setOnClickListener(v -> {
+            // Quay về chế độ xem mà không lưu
+            switchToViewMode();
+        });
+
+        // Nút "Đổi mật khẩu"
         btnChangePassword.setOnClickListener(v -> showChangePasswordDialog());
 
-        // Xử lý nút Xem lịch sử giao dịch
+        // Nút "Xem lịch sử giao dịch"
         btnViewOrderHistory.setOnClickListener(v -> {
             startActivity(new Intent(ProfileActivity.this, OrderHistoryActivity.class));
         });
 
-        // Xử lý đăng xuất
+        // Nút "Đăng xuất"
         btnLogout.setOnClickListener(v -> {
             Log.d(TAG, "Logout button clicked");
             if (session != null) {
@@ -130,8 +165,9 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.e(TAG, "SessionManager is null");
             }
         });
+    }
 
-        // Thanh chuyển mục dưới
+    private void setupBottomNavigation() {
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setSelectedItemId(R.id.nav_profile);
 
@@ -152,6 +188,18 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void switchToViewMode() {
+        // Hiện phần hiển thị
+        layoutDisplayInfo.setVisibility(View.VISIBLE);
+        // Ẩn phần chỉnh sửa
+        layoutEditInfo.setVisibility(View.GONE);
+
+        // Reset buttons
+        btnEditInfo.setVisibility(View.VISIBLE);
+        btnSave.setVisibility(View.GONE);
+        btnCancel.setVisibility(View.GONE);
+    }
+
     private void displayUserInfo(User user) {
         txtUsername.setText(user.getFullName());
         txtEmail.setText(user.getEmail());
@@ -159,20 +207,30 @@ public class ProfileActivity extends AppCompatActivity {
         txtAddress.setText(user.getAddress());
     }
 
-    private void enableEditFields(boolean enabled) {
-        edtUsername.setEnabled(enabled);
-        edtEmail.setEnabled(enabled);
-        edtPhone.setEnabled(enabled);
-        edtAddress.setEnabled(enabled);
-        edtUsername.setVisibility(enabled ? View.VISIBLE : View.GONE);
-        edtEmail.setVisibility(enabled ? View.VISIBLE : View.GONE);
-        edtPhone.setVisibility(enabled ? View.VISIBLE : View.GONE);
-        edtAddress.setVisibility(enabled ? View.VISIBLE : View.GONE);
-    }
-
     private boolean validateUserInfo(String username, String email, String phone, String address) {
-        if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()) {
-            Toast.makeText(this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+        if (username.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập tên người dùng!", Toast.LENGTH_SHORT).show();
+            edtUsername.requestFocus();
+            return false;
+        }
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập email!", Toast.LENGTH_SHORT).show();
+            edtEmail.requestFocus();
+            return false;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Email không hợp lệ!", Toast.LENGTH_SHORT).show();
+            edtEmail.requestFocus();
+            return false;
+        }
+        if (phone.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập số điện thoại!", Toast.LENGTH_SHORT).show();
+            edtPhone.requestFocus();
+            return false;
+        }
+        if (address.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập địa chỉ!", Toast.LENGTH_SHORT).show();
+            edtAddress.requestFocus();
             return false;
         }
         return true;
@@ -186,15 +244,18 @@ public class ProfileActivity extends AppCompatActivity {
         values.put("phone", phone);
         values.put("address", address);
 
-        int rowsAffected = db.update("users", values, "user_id = ?", new String[]{String.valueOf(currentUser.getUserId())});
+        int rowsAffected = db.update("users", values, "user_id = ?",
+                new String[]{String.valueOf(currentUser.getUserId())});
         db.close();
 
         if (rowsAffected > 0) {
+            // Cập nhật object currentUser
             currentUser.setFullName(username);
             currentUser.setEmail(email);
             currentUser.setPhone(phone);
             currentUser.setAddress(address);
-            session.createLoginSession(currentUser); // Cập nhật session
+            // Cập nhật session
+            session.createLoginSession(currentUser);
         } else {
             Toast.makeText(this, "Cập nhật thông tin thất bại!", Toast.LENGTH_SHORT).show();
         }
@@ -248,7 +309,8 @@ public class ProfileActivity extends AppCompatActivity {
             String hashedNewPassword = userDAO.hashPassword(newPassword);
 
             SQLiteDatabase db = DatabaseHelper.getInstance(this).getReadableDatabase();
-            Cursor cursor = db.rawQuery("SELECT password FROM users WHERE user_id = ?", new String[]{String.valueOf(currentUser.getUserId())});
+            Cursor cursor = db.rawQuery("SELECT password FROM users WHERE user_id = ?",
+                    new String[]{String.valueOf(currentUser.getUserId())});
             String dbPassword = null;
             if (cursor.moveToFirst()) {
                 dbPassword = cursor.getString(cursor.getColumnIndexOrThrow("password"));
@@ -261,7 +323,8 @@ public class ProfileActivity extends AppCompatActivity {
                 values.put("password", hashedNewPassword);
 
                 SQLiteDatabase dbUpdate = DatabaseHelper.getInstance(this).getWritableDatabase();
-                int rowsAffected = dbUpdate.update("users", values, "user_id = ?", new String[]{String.valueOf(currentUser.getUserId())});
+                int rowsAffected = dbUpdate.update("users", values, "user_id = ?",
+                        new String[]{String.valueOf(currentUser.getUserId())});
                 dbUpdate.close();
 
                 if (rowsAffected > 0) {

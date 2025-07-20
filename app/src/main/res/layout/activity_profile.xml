@@ -7,177 +7,402 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F5F5">
+        android:background="#F8F9FA"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:paddingBottom="100dp">
 
             <!-- Hồ sơ người dùng -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:background="#FFFFFF"
-                android:layout_marginBottom="12dp"
-                android:elevation="2dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thông tin người dùng"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="12dp" />
-
-                <!-- Hiển thị tên người dùng -->
-                <TextView
-                    android:id="@+id/txtUsername"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Hiển thị email -->
-                <TextView
-                    android:id="@+id/txtEmail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Hiển thị số điện thoại -->
-                <TextView
-                    android:id="@+id/txtPhone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Hiển thị địa chỉ -->
-                <TextView
-                    android:id="@+id/txtAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Edit thông tin người dùng (disabled by default) -->
-                <EditText
-                    android:id="@+id/edtUsername"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tên người dùng"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp"
-                    android:enabled="false"
-                    android:visibility="gone" />
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:background="#FFFFFF">
 
-                <EditText
-                    android:id="@+id/edtEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Email"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp"
-                    android:enabled="false"
-                    android:visibility="gone" />
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                <EditText
-                    android:id="@+id/edtPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Số điện thoại"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp"
-                    android:enabled="false"
-                    android:visibility="gone" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="👤"
+                            android:textSize="24sp"
+                            android:layout_marginEnd="12dp" />
 
-                <EditText
-                    android:id="@+id/edtAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Địa chỉ"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp"
-                    android:enabled="false"
-                    android:visibility="gone" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thông tin người dùng"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="#1A1A1A"
+                            android:fontFamily="sans-serif-medium" />
 
-                <!-- Nút sửa thông tin -->
-                <Button
-                    android:id="@+id/btnEditInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sửa thông tin"
-                    android:layout_marginTop="8dp" />
+                    </LinearLayout>
 
-                <!-- Nút Lưu (ẩn ban đầu) -->
-                <Button
-                    android:id="@+id/btnSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lưu"
-                    android:visibility="gone"
-                    android:layout_marginTop="8dp" />
+                    <!-- Container thông tin hiển thị -->
+                    <LinearLayout
+                        android:id="@+id/layoutDisplayInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#F8F9FA"
+                        android:padding="16dp"
+                        android:layout_marginBottom="16dp">
 
-            </LinearLayout>
+                        <!-- Hiển thị tên người dùng -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
 
-            <!-- Nút mở lịch sử giao dịch -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="👤"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp" />
 
-            </LinearLayout>
+                            <TextView
+                                android:id="@+id/txtUsername"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:textColor="#333333"
+                                android:text="Tên người dùng" />
+
+                        </LinearLayout>
+
+                        <!-- Hiển thị email -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📧"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp" />
+
+                            <TextView
+                                android:id="@+id/txtEmail"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:textColor="#333333"
+                                android:text="Email" />
+
+                        </LinearLayout>
+
+                        <!-- Hiển thị số điện thoại -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📞"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp" />
+
+                            <TextView
+                                android:id="@+id/txtPhone"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:textColor="#333333"
+                                android:text="Số điện thoại" />
+
+                        </LinearLayout>
+
+                        <!-- Hiển thị địa chỉ -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📍"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp" />
+
+                            <TextView
+                                android:id="@+id/txtAddress"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:textColor="#333333"
+                                android:text="Địa chỉ" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Container form chỉnh sửa (ẩn ban đầu) -->
+                    <LinearLayout
+                        android:id="@+id/layoutEditInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="16dp"
+                        android:visibility="gone">
+
+                        <!-- Edit thông tin người dùng -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:boxStrokeColor="#2196F3"
+                            app:hintTextColor="#2196F3">
+
+                            <EditText
+                                android:id="@+id/edtUsername"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:hint="Tên người dùng"
+                                android:textSize="14sp"
+                                android:paddingVertical="12dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:boxStrokeColor="#2196F3"
+                            app:hintTextColor="#2196F3">
+
+                            <EditText
+                                android:id="@+id/edtEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:hint="Email"
+                                android:textSize="14sp"
+                                android:paddingVertical="12dp"
+                                android:inputType="textEmailAddress" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:boxStrokeColor="#2196F3"
+                            app:hintTextColor="#2196F3">
+
+                            <EditText
+                                android:id="@+id/edtPhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:hint="Số điện thoại"
+                                android:textSize="14sp"
+                                android:paddingVertical="12dp"
+                                android:inputType="phone" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:boxStrokeColor="#2196F3"
+                            app:hintTextColor="#2196F3">
+
+                            <EditText
+                                android:id="@+id/edtAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:hint="Địa chỉ"
+                                android:textSize="14sp"
+                                android:paddingVertical="12dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <!-- Buttons container -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="end">
+
+                        <!-- Nút sửa thông tin -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✏️ Sửa"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            app:backgroundTint="#2196F3"
+                            app:cornerRadius="8dp"
+                            android:paddingHorizontal="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:minHeight="40dp" />
+
+                        <!-- Nút Lưu (ẩn ban đầu) -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSave"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lưu"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            app:backgroundTint="#4CAF50"
+                            app:cornerRadius="8dp"
+                            android:paddingHorizontal="16dp"
+                            android:minHeight="40dp"
+                            android:visibility="gone" />
+
+                        <!-- Nút Hủy (ẩn ban đầu) -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCancel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hủy"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            app:backgroundTint="#FF5722"
+                            app:cornerRadius="8dp"
+                            android:paddingHorizontal="16dp"
+                            android:layout_marginStart="8dp"
+                            android:minHeight="40dp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <!-- Danh sách tính năng -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tùy chọn tài khoản"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="12dp" />
-
-                <Button
-                    android:id="@+id/btnChangePassword"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Đổi mật khẩu" />
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:padding="20dp">
 
-                <Button
-                    android:id="@+id/btnViewOrderHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Xem lịch sử giao dịch" />
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⚙️"
+                            android:textSize="24sp"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tùy chọn tài khoản"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="#1A1A1A"
+                            android:fontFamily="sans-serif-medium" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="🔒 Đổi mật khẩu"
+                        android:textColor="#333333"
+                        android:textAlignment="textStart"
+                        android:paddingStart="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:backgroundTint="#F8F9FA"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewOrderHistory"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="📋 Xem lịch sử giao dịch"
+                        android:textColor="#333333"
+                        android:textAlignment="textStart"
+                        android:paddingStart="16dp"
+                        app:backgroundTint="#F8F9FA"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <!-- Đăng xuất -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:text="Đăng xuất"
-                android:backgroundTint="#D32F2F"
                 android:textColor="#FFFFFF"
-                android:elevation="2dp" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="#F44336"
+                app:cornerRadius="12dp"
+                android:elevation="4dp" />
 
         </LinearLayout>
     </ScrollView>
@@ -189,6 +414,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@android:color/white"
+        android:elevation="8dp"
         app:menu="@menu/bottom_navigation" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
