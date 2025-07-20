@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
-import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderActivity;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -25,12 +25,12 @@ import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
     private final Context context;
-    private final List<Order> orderList;
+    private final List<OrderActivity> orderActivityList;
     private final OrderDAO orderDAO;
 
-    public OrderAdapter(Context context, List<Order> orderList) {
+    public OrderAdapter(Context context, List<OrderActivity> orderActivityList) {
         this.context = context;
-        this.orderList = orderList;
+        this.orderActivityList = orderActivityList;
         this.orderDAO = new OrderDAO(context);
     }
 
@@ -44,11 +44,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = orderList.get(position);
+        OrderActivity orderActivity = orderActivityList.get(position);
 
-        holder.tvOrderNumber.setText("Mã đơn: " + order.getOrderNumber());
-        holder.tvCustomerName.setText("Khách hàng: " + order.getCustomerName());
-        holder.tvTotal.setText("Tổng tiền: " + formatCurrency(order.getTotalAmount()));
+        holder.tvOrderNumber.setText("Mã đơn: " + orderActivity.getOrderNumber());
+        holder.tvCustomerName.setText("Khách hàng: " + orderActivity.getCustomerName());
+        holder.tvTotal.setText("Tổng tiền: " + formatCurrency(orderActivity.getTotalAmount()));
 
         // Danh sách trạng thái
         String[] statusList = {"pending", "processing", "completed", "cancelled"};
@@ -59,7 +59,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         // Chọn trạng thái hiện tại
         int selectedIndex = 0;
         for (int i = 0; i < statusList.length; i++) {
-            if (statusList[i].equalsIgnoreCase(order.getStatus())) {
+            if (statusList[i].equalsIgnoreCase(orderActivity.getStatus())) {
                 selectedIndex = i;
                 break;
             }
@@ -81,9 +81,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                     return;
                 }
 
-                if (!newStatus.equalsIgnoreCase(order.getStatus())) {
-                    orderDAO.updateOrderStatus(order.getOrderId(), newStatus);
-                    order.setStatus(newStatus);
+                if (!newStatus.equalsIgnoreCase(orderActivity.getStatus())) {
+                    orderDAO.updateOrderStatus(orderActivity.getOrderId(), newStatus);
+                    orderActivity.setStatus(newStatus);
                     Toast.makeText(context, "Đã cập nhật trạng thái đơn hàng", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -93,12 +93,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         });
 
         holder.btnDetails.setOnClickListener(v -> {
-            String message = "Mã đơn: " + order.getOrderNumber() + "\n"
-                    + "Khách hàng: " + order.getCustomerName() + "\n"
-                    + "Số điện thoại: " + order.getCustomerPhone() + "\n"
-                    + "Địa chỉ giao hàng: " + order.getShippingAddress() + "\n"
-                    + "Trạng thái: " + order.getStatus() + "\n"
-                    + "Tổng tiền: " + formatCurrency(order.getTotalAmount());
+            String message = "Mã đơn: " + orderActivity.getOrderNumber() + "\n"
+                    + "Khách hàng: " + orderActivity.getCustomerName() + "\n"
+                    + "Số điện thoại: " + orderActivity.getCustomerPhone() + "\n"
+                    + "Địa chỉ giao hàng: " + orderActivity.getShippingAddress() + "\n"
+                    + "Trạng thái: " + orderActivity.getStatus() + "\n"
+                    + "Tổng tiền: " + formatCurrency(orderActivity.getTotalAmount());
 
             new AlertDialog.Builder(context)
                     .setTitle("Chi tiết đơn hàng")
@@ -110,7 +110,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     @Override
     public int getItemCount() {
-        return orderList.size();
+        return orderActivityList.size();
     }
 
     // ✅ Hàm định dạng tiền theo chuẩn VNĐ

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.orderclothes.database.DatabaseHelper;
-import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderActivity;
 import com.example.orderclothes.models.OrderItem;
 
 import java.util.ArrayList;
@@ -20,18 +20,18 @@ public class OrderDAO {
     }
 
     // Insert Order
-    public long insertOrder(Order order) {
+    public long insertOrder(OrderActivity orderActivity) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("order_number", order.getOrderNumber());
-        values.put("user_id", order.getUserId());
-        values.put("order_date", order.getOrderDate());
-        values.put("subtotal", order.getSubtotal());
-        values.put("total_amount", order.getTotalAmount());
-        values.put("customer_name", order.getCustomerName());
-        values.put("customer_phone", order.getCustomerPhone());
-        values.put("shipping_address", order.getShippingAddress());
-        values.put("status", order.getStatus());
+        values.put("order_number", orderActivity.getOrderNumber());
+        values.put("user_id", orderActivity.getUserId());
+        values.put("order_date", orderActivity.getOrderDate());
+        values.put("subtotal", orderActivity.getSubtotal());
+        values.put("total_amount", orderActivity.getTotalAmount());
+        values.put("customer_name", orderActivity.getCustomerName());
+        values.put("customer_phone", orderActivity.getCustomerPhone());
+        values.put("shipping_address", orderActivity.getShippingAddress());
+        values.put("status", orderActivity.getStatus());
 
         long id = db.insert("orders", null, values);
         db.close();
@@ -57,57 +57,57 @@ public class OrderDAO {
     }
 
     // Get all orders (Admin/Staff use)
-    public List<Order> getAllOrders() {
-        List<Order> orders = new ArrayList<>();
+    public List<OrderActivity> getAllOrders() {
+        List<OrderActivity> orderActivities = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM orders ORDER BY order_date DESC", null);
         if (cursor.moveToFirst()) {
             do {
-                Order order = new Order();
-                order.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
-                order.setOrderNumber(cursor.getString(cursor.getColumnIndexOrThrow("order_number")));
-                order.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
-                order.setOrderDate(cursor.getString(cursor.getColumnIndexOrThrow("order_date")));
-                order.setSubtotal(cursor.getDouble(cursor.getColumnIndexOrThrow("subtotal")));
-                order.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount")));
-                order.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow("customer_name")));
-                order.setCustomerPhone(cursor.getString(cursor.getColumnIndexOrThrow("customer_phone")));
-                order.setShippingAddress(cursor.getString(cursor.getColumnIndexOrThrow("shipping_address")));
-                order.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
-                order.setOrderItems(getOrderItemsByOrderId(order.getOrderId()));
-                orders.add(order);
+                OrderActivity orderActivity = new OrderActivity();
+                orderActivity.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
+                orderActivity.setOrderNumber(cursor.getString(cursor.getColumnIndexOrThrow("order_number")));
+                orderActivity.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
+                orderActivity.setOrderDate(cursor.getString(cursor.getColumnIndexOrThrow("order_date")));
+                orderActivity.setSubtotal(cursor.getDouble(cursor.getColumnIndexOrThrow("subtotal")));
+                orderActivity.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount")));
+                orderActivity.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow("customer_name")));
+                orderActivity.setCustomerPhone(cursor.getString(cursor.getColumnIndexOrThrow("customer_phone")));
+                orderActivity.setShippingAddress(cursor.getString(cursor.getColumnIndexOrThrow("shipping_address")));
+                orderActivity.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+                orderActivity.setOrderItems(getOrderItemsByOrderId(orderActivity.getOrderId()));
+                orderActivities.add(orderActivity);
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
-        return orders;
+        return orderActivities;
     }
 
     // Get orders by user ID (for customer)
-    public List<Order> getOrdersByUserId(int userId) {
-        List<Order> orders = new ArrayList<>();
+    public List<OrderActivity> getOrdersByUserId(int userId) {
+        List<OrderActivity> orderActivities = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
         while (cursor.moveToNext()) {
-            Order order = new Order();
-            order.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
-            order.setOrderNumber(cursor.getString(cursor.getColumnIndexOrThrow("order_number")));
-            order.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
-            order.setOrderDate(cursor.getString(cursor.getColumnIndexOrThrow("order_date")));
-            order.setSubtotal(cursor.getDouble(cursor.getColumnIndexOrThrow("subtotal")));
-            order.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount")));
-            order.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow("customer_name")));
-            order.setCustomerPhone(cursor.getString(cursor.getColumnIndexOrThrow("customer_phone")));
-            order.setShippingAddress(cursor.getString(cursor.getColumnIndexOrThrow("shipping_address")));
-            order.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
-            order.setOrderItems(getOrderItemsByOrderId(order.getOrderId()));
-            orders.add(order);
+            OrderActivity orderActivity = new OrderActivity();
+            orderActivity.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
+            orderActivity.setOrderNumber(cursor.getString(cursor.getColumnIndexOrThrow("order_number")));
+            orderActivity.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
+            orderActivity.setOrderDate(cursor.getString(cursor.getColumnIndexOrThrow("order_date")));
+            orderActivity.setSubtotal(cursor.getDouble(cursor.getColumnIndexOrThrow("subtotal")));
+            orderActivity.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("total_amount")));
+            orderActivity.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow("customer_name")));
+            orderActivity.setCustomerPhone(cursor.getString(cursor.getColumnIndexOrThrow("customer_phone")));
+            orderActivity.setShippingAddress(cursor.getString(cursor.getColumnIndexOrThrow("shipping_address")));
+            orderActivity.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+            orderActivity.setOrderItems(getOrderItemsByOrderId(orderActivity.getOrderId()));
+            orderActivities.add(orderActivity);
         }
         cursor.close();
         db.close();
-        return orders;
+        return orderActivities;
     }
 
     // Get order items by order ID

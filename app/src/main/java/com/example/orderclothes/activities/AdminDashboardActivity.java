@@ -17,7 +17,7 @@ import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
 import com.example.orderclothes.database.dao.ProductDAO;
 import com.example.orderclothes.database.dao.UserDAO;
-import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderActivity;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
 
@@ -95,7 +95,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         OrderDAO orderDAO = new OrderDAO(this);
         int totalOrders = orderDAO.getAllOrders().size();
         double totalRevenue = orderDAO.getAllOrders().stream()
-                .mapToDouble(Order::getTotalAmount)
+                .mapToDouble(OrderActivity::getTotalAmount)
                 .sum();
 
         tvTotalOrders.setText(String.valueOf(totalOrders));

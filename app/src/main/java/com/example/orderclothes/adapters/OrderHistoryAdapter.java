@@ -7,26 +7,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.orderclothes.R;
-import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderActivity;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
 public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapter.OrderViewHolder> {
 
-    private List<Order> orders;
+    private List<OrderActivity> orderActivities;
     private OnOrderClickListener listener;
 
     public interface OnOrderClickListener {
-        void onOrderClick(Order order);
+        void onOrderClick(OrderActivity orderActivity);
     }
 
     public OrderHistoryAdapter(OnOrderClickListener listener) {
         this.listener = listener;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setOrders(List<OrderActivity> orderActivities) {
+        this.orderActivities = orderActivities;
         notifyDataSetChanged();
     }
 
@@ -39,18 +39,18 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = orders.get(position);
+        OrderActivity orderActivity = orderActivities.get(position);
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onOrderClick(order);
+            if (listener != null) listener.onOrderClick(orderActivity);
         });
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
-        holder.tvOrderDate.setText("Đơn hàng #" + order.getOrderNumber() + " - " + order.getOrderDate());
-        holder.tvOrderTotal.setText("Tổng: " + formatter.format(order.getTotalAmount()) + "đ");
+        holder.tvOrderDate.setText("Đơn hàng #" + orderActivity.getOrderNumber() + " - " + orderActivity.getOrderDate());
+        holder.tvOrderTotal.setText("Tổng: " + formatter.format(orderActivity.getTotalAmount()) + "đ");
     }
 
     @Override
     public int getItemCount() {
-        return orders != null ? orders.size() : 0;
+        return orderActivities != null ? orderActivities.size() : 0;
     }
 
     static class OrderViewHolder extends RecyclerView.ViewHolder {

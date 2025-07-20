@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.orderclothes.R;
 import com.example.orderclothes.adapters.OrderAdapter;
 import com.example.orderclothes.database.dao.OrderDAO;
-import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderActivity;
 import com.google.android.material.appbar.MaterialToolbar; // ✅ Đúng import
 import androidx.appcompat.app.ActionBar;
 
@@ -31,9 +31,9 @@ public class ManageOrdersActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         orderDAO = new OrderDAO(this);
-        List<Order> orderList = orderDAO.getAllOrders();
+        List<OrderActivity> orderActivityList = orderDAO.getAllOrders();
 
-        OrderAdapter adapter = new OrderAdapter(this, orderList);
+        OrderAdapter adapter = new OrderAdapter(this, orderActivityList);
         recyclerView.setAdapter(adapter);
 
         // Thiết lập MaterialToolbar

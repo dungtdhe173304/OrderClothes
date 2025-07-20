@@ -2,7 +2,7 @@ package com.example.orderclothes.models;
 
 import java.util.List;
 
-public class Order {
+public class OrderActivity {
     private int orderId;
     private String orderNumber;
     private int userId;
@@ -15,7 +15,7 @@ public class Order {
     private String status;
     private List<OrderItem> orderItems;
 
-    public Order() {
+    public OrderActivity() {
     }
 
     public int getOrderId() {

@@ -19,7 +19,7 @@ import com.example.orderclothes.database.dao.CartDAO;
 import com.example.orderclothes.database.dao.OrderDAO;
 import com.example.orderclothes.database.dao.UserDAO;
 import com.example.orderclothes.models.CartItem;
-import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderActivity;
 import com.example.orderclothes.models.OrderItem;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
@@ -172,18 +172,18 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         User user = session.getCurrentUser();
 
         if (user != null && cartItems != null && !cartItems.isEmpty()) {
-            Order order = new Order();
-            order.setUserId(user.getUserId());
-            order.setOrderNumber("ORD" + System.currentTimeMillis()); // Tạo số đơn hàng duy nhất
-            order.setOrderDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
-            order.setSubtotal(calculateSubtotal());
-            order.setTotalAmount(calculateTotal());
-            order.setCustomerName(user.getFullName());
-            order.setCustomerPhone(user.getPhone());
-            order.setShippingAddress(user.getAddress());
-            order.setStatus("pending");
+            OrderActivity orderActivity = new OrderActivity();
+            orderActivity.setUserId(user.getUserId());
+            orderActivity.setOrderNumber("ORD" + System.currentTimeMillis()); // Tạo số đơn hàng duy nhất
+            orderActivity.setOrderDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
+            orderActivity.setSubtotal(calculateSubtotal());
+            orderActivity.setTotalAmount(calculateTotal());
+            orderActivity.setCustomerName(user.getFullName());
+            orderActivity.setCustomerPhone(user.getPhone());
+            orderActivity.setShippingAddress(user.getAddress());
+            orderActivity.setStatus("pending");
 
-            long orderId = orderDAO.insertOrder(order);
+            long orderId = orderDAO.insertOrder(orderActivity);
 
             if (orderId > 0) {
                 List<OrderItem> orderItems = new ArrayList<>();
