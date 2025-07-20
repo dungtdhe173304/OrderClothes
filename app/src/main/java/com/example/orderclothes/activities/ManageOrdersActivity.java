@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.orderclothes.R;
 import com.example.orderclothes.adapters.OrderAdapter;
 import com.example.orderclothes.database.dao.OrderDAO;
-import com.example.orderclothes.models.OrderActivity;
+import com.example.orderclothes.models.Order;
 import com.google.android.material.appbar.MaterialToolbar; // ✅ Đúng import
 import androidx.appcompat.app.ActionBar;
 
@@ -31,7 +31,7 @@ public class ManageOrdersActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         orderDAO = new OrderDAO(this);
-        List<OrderActivity> orderActivityList = orderDAO.getAllOrderActivities();
+        List<Order> orderActivityList = orderDAO.getAllOrderActivities();
         orderAdapter = new OrderAdapter(this, orderActivityList); // Use the class field
         recyclerView.setAdapter(orderAdapter);
 

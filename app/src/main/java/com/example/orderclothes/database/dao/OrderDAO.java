@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.orderclothes.database.DatabaseHelper;
 import com.example.orderclothes.models.Order;
-import com.example.orderclothes.models.OrderActivity;
 import com.example.orderclothes.models.OrderItem;
 import com.example.orderclothes.models.ReportItem;
 
@@ -30,7 +29,7 @@ public class OrderDAO {
 
 
     // ======================== INSERT ========================
-    public long insertOrder(OrderActivity orderActivity) {
+    public long insertOrder(Order orderActivity) {
         ContentValues values = new ContentValues();
         values.put("order_number", orderActivity.getOrderNumber());
         values.put("user_id", orderActivity.getUserId());
@@ -62,12 +61,12 @@ public class OrderDAO {
 
 
     // ======================== GET ========================
-    public List<OrderActivity> getAllOrderActivities() {
-        List<OrderActivity> list = new ArrayList<>();
+    public List<Order> getAllOrderActivities() {
+        List<Order> list = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM orders ORDER BY order_date DESC", null);
         if (cursor.moveToFirst()) {
             do {
-                OrderActivity order = new OrderActivity();
+                Order order = new Order();
                 order.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
                 order.setOrderNumber(cursor.getString(cursor.getColumnIndexOrThrow("order_number")));
                 order.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
@@ -87,11 +86,11 @@ public class OrderDAO {
     }
 
 
-    public List<OrderActivity> getOrdersByUserId(int userId) {
-        List<OrderActivity> list = new ArrayList<>();
+    public List<Order> getOrdersByUserId(int userId) {
+        List<Order> list = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC", new String[]{String.valueOf(userId)});
         while (cursor.moveToNext()) {
-            OrderActivity order = new OrderActivity();
+            Order order = new Order();
             order.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
             order.setOrderNumber(cursor.getString(cursor.getColumnIndexOrThrow("order_number")));
             order.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.orderclothes.R;
 import com.example.orderclothes.adapters.OrderHistoryAdapter;
 import com.example.orderclothes.database.dao.OrderDAO;
-import com.example.orderclothes.models.OrderActivity;
+import com.example.orderclothes.models.Order;
 import com.example.orderclothes.models.OrderItem;
 import com.example.orderclothes.utils.SessionManager;
 import java.util.List;
@@ -50,7 +50,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
     private void loadOrderHistory() {
         if (sessionManager.getCurrentUser() != null) {
-            List<OrderActivity> orderActivities = orderDAO.getOrdersByUserId(sessionManager.getCurrentUser().getUserId());
+            List<Order> orderActivities = orderDAO.getOrdersByUserId(sessionManager.getCurrentUser().getUserId());
             if (orderActivities.isEmpty()) {
                 rvOrderHistory.setVisibility(View.GONE);
                 TextView tvEmpty = new TextView(this);
@@ -65,7 +65,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
         }
     }
 
-    private void showOrderDetails(OrderActivity orderActivity) {
+    private void showOrderDetails(Order orderActivity) {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_order_details, null);
         builder.setView(dialogView);

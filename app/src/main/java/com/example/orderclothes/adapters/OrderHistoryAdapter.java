@@ -7,25 +7,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.orderclothes.R;
-import com.example.orderclothes.models.OrderActivity;
+import com.example.orderclothes.models.Order;
+import com.example.orderclothes.models.OrderItem;
+
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
 public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapter.OrderViewHolder> {
 
-    private List<OrderActivity> orderActivities;
+    private List<Order> orderActivities;
     private OnOrderClickListener listener;
 
     public interface OnOrderClickListener {
-        void onOrderClick(OrderActivity orderActivity);
+        void onOrderClick(Order orderActivity);
     }
 
     public OrderHistoryAdapter(OnOrderClickListener listener) {
         this.listener = listener;
     }
 
-    public void setOrders(List<OrderActivity> orderActivities) {
+    public void setOrders(List<Order> orderActivities) {
         this.orderActivities = orderActivities;
         notifyDataSetChanged();
     }
@@ -39,7 +41,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        OrderActivity orderActivity = orderActivities.get(position);
+        Order orderActivity = orderActivities.get(position);
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onOrderClick(orderActivity);
         });

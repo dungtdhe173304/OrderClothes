@@ -19,7 +19,7 @@ import com.example.orderclothes.database.dao.CartDAO;
 import com.example.orderclothes.database.dao.OrderDAO;
 import com.example.orderclothes.database.dao.UserDAO;
 import com.example.orderclothes.models.CartItem;
-import com.example.orderclothes.models.OrderActivity;
+import com.example.orderclothes.models.Order;
 import com.example.orderclothes.models.OrderItem;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
@@ -172,7 +172,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         User user = session.getCurrentUser();
 
         if (user != null && cartItems != null && !cartItems.isEmpty()) {
-            OrderActivity orderActivity = new OrderActivity();
+            Order orderActivity = new Order();
             orderActivity.setUserId(user.getUserId());
             orderActivity.setOrderNumber("ORD" + System.currentTimeMillis()); // Tạo số đơn hàng duy nhất
             orderActivity.setOrderDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));

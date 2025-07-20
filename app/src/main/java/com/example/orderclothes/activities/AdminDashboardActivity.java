@@ -12,13 +12,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import com.example.orderclothes.models.Order;
 
 import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
 import com.example.orderclothes.database.dao.ProductDAO;
 import com.example.orderclothes.database.dao.UserDAO;
-import com.example.orderclothes.models.OrderActivity;
+import com.example.orderclothes.models.Order;
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
 
@@ -118,13 +117,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
         cardReports.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminDashboardActivity.this, ReportActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(this, ReportActivity.class);
+            userManageLauncher.launch(intent);
         });
-
-
-
-
     }
 
     @Override

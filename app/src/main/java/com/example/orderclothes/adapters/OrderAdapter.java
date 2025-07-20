@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
-import com.example.orderclothes.models.OrderActivity;
+import com.example.orderclothes.models.Order;
+
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -25,10 +26,10 @@ import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
     private final Context context;
-    private final List<OrderActivity> orderActivityList;
+    private final List<Order> orderActivityList;
     private final OrderDAO orderDAO;
 
-    public OrderAdapter(Context context, List<OrderActivity> orderActivityList) {
+    public OrderAdapter(Context context, List<Order> orderActivityList) {
         this.context = context;
         this.orderActivityList = orderActivityList;
         this.orderDAO = new OrderDAO(context);
@@ -44,7 +45,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        OrderActivity orderActivity = orderActivityList.get(position);
+        Order orderActivity = orderActivityList.get(position);
 
         holder.tvOrderNumber.setText("Mã đơn: " + orderActivity.getOrderNumber());
         holder.tvCustomerName.setText("Khách hàng: " + orderActivity.getCustomerName());
