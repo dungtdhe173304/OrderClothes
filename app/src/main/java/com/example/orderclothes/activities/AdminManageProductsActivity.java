@@ -240,7 +240,6 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
         ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categoryNames);
         spnCategory.setAdapter(adapterSpinner);
 
-        // Nếu là sửa thì hiển thị dữ liệu cũ
         if (productToEdit != null) {
             etName.setText(productToEdit.getProductName());
             etBrand.setText(productToEdit.getBrand());
@@ -250,7 +249,6 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
             etImageUrl.setText(productToEdit.getImageUrl());
             Glide.with(this).load(productToEdit.getImageUrl()).placeholder(R.drawable.ic_shopping_bag).into(ivPreview);
 
-            // chọn đúng category
             for (int i = 0; i < allCategories.size(); i++) {
                 if (allCategories.get(i).getCategoryId() == productToEdit.getCategoryId()) {
                     spnCategory.setSelection(i);
@@ -259,12 +257,9 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
             }
         }
 
-        // Xem trước ảnh khi nhập URL
         etImageUrl.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
             @Override
             public void afterTextChanged(Editable s) {
                 String url = s.toString().trim();
@@ -272,58 +267,95 @@ public class AdminManageProductsActivity extends AppCompatActivity implements Ad
                     Glide.with(AdminManageProductsActivity.this)
                             .load(url)
                             .placeholder(R.drawable.ic_shopping_bag)
-                            .error(R.drawable.ic_error) // Thêm hình lỗi nếu có
+                            .error(R.drawable.ic_error)
                             .into(ivPreview);
                 } else {
-                    ivPreview.setImageResource(R.drawable.ic_shopping_bag); // reset lại nếu rỗng
+                    ivPreview.setImageResource(R.drawable.ic_shopping_bag);
                 }
             }
         });
 
-
         builder.setTitle(productToEdit == null ? "Thêm sản phẩm" : "Sửa sản phẩm");
 
-        builder.setPositiveButton("Lưu", (dialog, which) -> {
-            String name = etName.getText().toString().trim();
-            String brand = etBrand.getText().toString().trim();
-            String desc = etDesc.getText().toString().trim();
-            String imgUrl = etImageUrl.getText().toString().trim();
-            int categoryId = allCategories.get(spnCategory.getSelectedItemPosition()).getCategoryId();
+        builder.setPositiveButton("Lưu", null); // gán sau để không đóng dialog nếu lỗi
+        builder.setNegativeButton("Hủy", null);
 
-            double price;
-            int quantity;
-            try {
-                price = Double.parseDouble(etPrice.getText().toString().trim());
-                quantity = Integer.parseInt(etQty.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Giá hoặc số lượng không hợp lệ", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(d -> {
+            Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            btnSave.setOnClickListener(v -> {
+                String name = etName.getText().toString().trim();
+                String brand = etBrand.getText().toString().trim();
+                String desc = etDesc.getText().toString().trim();
+                String imgUrl = etImageUrl.getText().toString().trim();
+                String priceStr = etPrice.getText().toString().trim();
+                String qtyStr = etQty.getText().toString().trim();
+                int categoryId = allCategories.get(spnCategory.getSelectedItemPosition()).getCategoryId();
 
-            if (productToEdit == null) {
-                // Thêm mới
-                Product p = new Product(name, desc, price, brand, quantity, categoryId, imgUrl, true);
-                productDAO.insertProduct(p);
-                Toast.makeText(this, "Đã thêm sản phẩm", Toast.LENGTH_SHORT).show();
-            } else {
-                // Cập nhật
-                productToEdit.setProductName(name);
-                productToEdit.setBrand(brand);
-                productToEdit.setPrice(price);
-                productToEdit.setStockQuantity(quantity);
-                productToEdit.setDescription(desc);
-                productToEdit.setImageUrl(imgUrl);
-                productToEdit.setCategoryId(categoryId);
-                productDAO.updateProduct(productToEdit);
-                Toast.makeText(this, "Đã cập nhật sản phẩm", Toast.LENGTH_SHORT).show();
-            }
+                // VALIDATION
+                if (name.isEmpty()) {
+                    Toast.makeText(this, "Tên sản phẩm không được để trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (brand.isEmpty()) {
+                    Toast.makeText(this, "Thương hiệu không được để trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (desc.isEmpty()) {
+                    Toast.makeText(this, "Mô tả không được để trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (imgUrl.isEmpty()) {
+                    Toast.makeText(this, "URL ảnh không được để trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                double price;
+                try {
+                    price = Double.parseDouble(priceStr);
+                    if (price <= 0) {
+                        Toast.makeText(this, "Giá phải lớn hơn 0", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Giá không hợp lệ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                int quantity;
+                try {
+                    quantity = Integer.parseInt(qtyStr);
+                    if (quantity < 0) {
+                        Toast.makeText(this, "Số lượng không được âm", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Số lượng không hợp lệ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            loadProducts(); // refresh danh sách
-            setResult(RESULT_OK);
+                if (productToEdit == null) {
+                    Product p = new Product(name, desc, price, brand, quantity, categoryId, imgUrl, true);
+                    productDAO.insertProduct(p);
+                    Toast.makeText(this, "Đã thêm sản phẩm", Toast.LENGTH_SHORT).show();
+                } else {
+                    productToEdit.setProductName(name);
+                    productToEdit.setBrand(brand);
+                    productToEdit.setPrice(price);
+                    productToEdit.setStockQuantity(quantity);
+                    productToEdit.setDescription(desc);
+                    productToEdit.setImageUrl(imgUrl);
+                    productToEdit.setCategoryId(categoryId);
+                    productDAO.updateProduct(productToEdit);
+                    Toast.makeText(this, "Đã cập nhật sản phẩm", Toast.LENGTH_SHORT).show();
+                }
+
+                loadProducts();
+                setResult(RESULT_OK);
+                dialog.dismiss(); // chỉ đóng khi hợp lệ
+            });
         });
 
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
+        dialog.show();
     }
+
 
 }

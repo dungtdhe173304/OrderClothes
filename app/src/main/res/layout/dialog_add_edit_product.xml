@@ -68,7 +68,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:layout_marginTop="8dp"
-            android:background="@color/success_green"
+            android:background="#F0F0F0"
             android:contentDescription="Xem trước hình ảnh"
             android:src="@drawable/ic_shopping_bag" />
 
