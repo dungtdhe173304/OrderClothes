@@ -1,9 +1,18 @@
 <resources>
     <string name="app_name">OrderClothes</string>
+
+    <!-- Trạng thái đơn hàng -->
     <string-array name="order_status_array">
-        <item>pending</item>
-        <item>processing</item>
-        <item>completed</item>
-        <item>cancelled</item>
+        <item>Chờ xử lý</item>
+        <item>Đang xử lý</item>
+        <item>Hoàn tất</item>
+        <item>Đã hủy</item>
+    </string-array>
+
+    <!-- Loại báo cáo -->
+    <string-array name="report_types">
+        <item>Thống kê theo ngày</item>
+        <item>Thống kê theo tháng</item>
+        <item>Thống kê theo năm</item>
     </string-array>
 </resources>

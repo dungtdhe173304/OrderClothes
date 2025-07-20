@@ -15,6 +15,9 @@
         android:theme="@style/Theme.OrderClothes"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ManageOrdersActivity"
             android:exported="false" />
         <activity

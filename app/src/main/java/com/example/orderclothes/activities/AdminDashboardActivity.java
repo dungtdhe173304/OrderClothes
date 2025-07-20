@@ -117,9 +117,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
         cardReports.setOnClickListener(v -> {
-            Toast.makeText(this, "Đang phát triển - Báo cáo thống kê", Toast.LENGTH_SHORT).show();
-            // Có thể chuyển đến activity khác nếu có
+            Intent intent = new Intent(AdminDashboardActivity.this, ReportActivity.class);
+            startActivity(intent);
         });
+
     }
 
     @Override

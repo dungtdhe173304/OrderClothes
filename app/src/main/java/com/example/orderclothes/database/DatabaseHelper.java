@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "order_clothes.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     // Singleton pattern
     private static DatabaseHelper instance;
@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return instance;
     }
 
-    private DatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -173,6 +173,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         insertOrderItem(db, orderId1, 1, "Áo thun nam basic", 1, "S", 1, 199000);
 
+        // Log để kiểm tra
+        android.util.Log.d("DB_INIT", "Insert Order ORD001 - ID: " + orderId1);
+
         // Đơn hàng 2
         long orderId2 = insertOrder(db,
                 "ORD002", 2, "Nguyễn Thị B", "0909876543", "456 Đường XYZ, TP.HCM",
@@ -180,7 +183,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         insertOrderItem(db, orderId2, 2, "Áo thun nữ oversize", 2, "M", 1, 229000);
         insertOrderItem(db, orderId2, 4, "Áo sơ mi nữ họa tiết", 4, "L", 1, 359000);
+
+        android.util.Log.d("DB_INIT", "Insert Order ORD002 - ID: " + orderId2);
     }
+
 
     private long insertOrder(SQLiteDatabase db, String orderNumber, int userId, String customerName,
                              String phone, String address, double subtotal, Integer voucherId, String voucherCode,
