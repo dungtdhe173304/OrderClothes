@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +56,8 @@ public class UserHomeActivity extends AppCompatActivity implements
         loadData();
         setupListeners();
         setupBottomNavigation();
+
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
     private void initViews() {
@@ -83,16 +84,12 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void setupRecyclerViews() {
-        // Setup Categories RecyclerView
-        LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvCategories.setLayoutManager(categoryLayoutManager);
+        rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         categoryAdapter = new CategoryAdapter(this, categories);
         categoryAdapter.setOnCategoryClickListener(this);
         rvCategories.setAdapter(categoryAdapter);
 
-        // Setup Products RecyclerView
-        LinearLayoutManager productLayoutManager = new LinearLayoutManager(this);
-        rvProducts.setLayoutManager(productLayoutManager);
+        rvProducts.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(this, products);
         productAdapter.setOnProductClickListener(this);
         rvProducts.setAdapter(productAdapter);
@@ -100,9 +97,7 @@ public class UserHomeActivity extends AppCompatActivity implements
 
     private void loadData() {
         new Thread(() -> {
-            // Load categories
             List<Category> loadedCategories = categoryDAO.getAllCategories();
-            // Load products
             List<Product> loadedProducts = productDAO.getAllActiveProducts();
             runOnUiThread(() -> {
                 categories.clear();
@@ -111,7 +106,6 @@ public class UserHomeActivity extends AppCompatActivity implements
 
                 allProducts.clear();
                 allProducts.addAll(loadedProducts);
-                // Hiển thị toàn bộ sản phẩm
                 products.clear();
                 products.addAll(allProducts);
                 productAdapter.notifyDataSetChanged();
@@ -124,29 +118,19 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void setupListeners() {
-        // Search functionality
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterProducts(s.toString());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
 
-        // See all categories
-        tvSeeAllCategories.setOnClickListener(v -> {
-            Toast.makeText(this, "Show all categories - Coming soon", Toast.LENGTH_SHORT).show();
-        });
+        tvSeeAllCategories.setOnClickListener(v ->
+            Toast.makeText(this, "Show all categories - Coming soon", Toast.LENGTH_SHORT).show()
+        );
 
-        // See all products
-        tvSeeAllProducts.setOnClickListener(v -> {
-            showAllProducts();
-        });
+        tvSeeAllProducts.setOnClickListener(v -> showAllProducts());
     }
 
     private void filterProducts(String query) {
@@ -154,7 +138,6 @@ public class UserHomeActivity extends AppCompatActivity implements
             if (selectedCategory != null) {
                 filterProductsByCategory(selectedCategory);
             } else {
-                // Hiển thị lại toàn bộ sản phẩm
                 products.clear();
                 products.addAll(allProducts);
                 productAdapter.notifyDataSetChanged();
@@ -198,41 +181,33 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void setupBottomNavigation() {
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-
-                if (itemId == R.id.nav_home) {
-                    return true;
-                } else if (itemId == R.id.nav_cart) {
-                    Toast.makeText(UserHomeActivity.this, "Cart - Coming soon", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.nav_voucher) {
-                    Toast.makeText(UserHomeActivity.this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
-                } else if (itemId == R.id.nav_voucher) {
-                    Toast.makeText(UserHomeActivity.this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.nav_orders) {
-                    Toast.makeText(UserHomeActivity.this, "Orders - Coming soon", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.nav_profile) {
-                    openProfile();
-                    return true;
-                }
-                return false;
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                return true;
+            } else if (itemId == R.id.nav_cart) {
+                startActivity(new Intent(UserHomeActivity.this, CartActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_voucher) {
+                Toast.makeText(this, "Voucher - Coming soon", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_orders) {
+                Toast.makeText(this, "Orders - Coming soon", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                openProfile();
+                return true;
             }
+            return false;
         });
     }
 
     private void openProfile() {
-        // TODO: Create ProfileActivity
-        Toast.makeText(this, "Profile - Coming soon", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(UserHomeActivity.this, ProfileActivity.class));
     }
 
     private void redirectToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
@@ -246,7 +221,7 @@ public class UserHomeActivity extends AppCompatActivity implements
 
     @Override
     public void onProductClick(Product product) {
-        // TODO: Open ProductDetailActivity
+        // TODO: Navigate to product detail
         Toast.makeText(this, "Product: " + product.getProductName(), Toast.LENGTH_SHORT).show();
     }
 
@@ -254,25 +229,28 @@ public class UserHomeActivity extends AppCompatActivity implements
     public void onAddToCartClick(Product product) {
         if (product.getStockQuantity() <= 0) {
             Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
-            return;
+        } else {
+            // TODO: Add to cart logic
+            Toast.makeText(this, "Đã thêm " + product.getProductName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
         }
-
-        // TODO: Add to cart functionality
-        Toast.makeText(this, "Đã thêm " + product.getProductName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBackPressed() {
-        // Clear search and category filter when back pressed
         if (!etSearch.getText().toString().isEmpty() || selectedCategory != null) {
             etSearch.setText("");
             selectedCategory = null;
-            // Hiển thị lại toàn bộ sản phẩm
             products.clear();
             products.addAll(allProducts);
             productAdapter.notifyDataSetChanged();
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 }
