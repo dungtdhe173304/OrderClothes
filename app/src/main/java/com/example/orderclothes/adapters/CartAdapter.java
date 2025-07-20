@@ -44,7 +44,25 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        holder.bind(cartItems.get(position));
+        CartItem item = cartItems.get(position);
+        holder.tvProductName.setText(item.getProductName() + " (Size: " + (item.getSizeName() != null ? item.getSizeName() : "N/A") + ")");
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+        holder.tvProductPrice.setText(formatter.format(item.getUnitPrice()) + "đ");
+        holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext()).load(item.getImageUrl()).placeholder(R.drawable.ic_shopping_bag).into(holder.ivProductImage);
+        } else {
+            holder.ivProductImage.setImageResource(R.drawable.ic_shopping_bag);
+        }
+        holder.btnRemove.setOnClickListener(v -> {
+            if (listener != null) listener.onRemoveCartItem(item);
+        });
+        holder.btnMinus.setOnClickListener(v -> {
+            if (listener != null && item.getQuantity() > 1) listener.onUpdateQuantity(item, item.getQuantity() - 1);
+        });
+        holder.btnPlus.setOnClickListener(v -> {
+            if (listener != null) listener.onUpdateQuantity(item, item.getQuantity() + 1);
+        });
     }
 
     @Override

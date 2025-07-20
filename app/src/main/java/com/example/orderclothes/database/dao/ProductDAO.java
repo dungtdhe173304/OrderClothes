@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.orderclothes.database.DatabaseHelper;
 import com.example.orderclothes.models.Product;
+import com.example.orderclothes.models.ProductSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,22 @@ public class ProductDAO {
 
         return count;
     }
-
+    public List<ProductSize> getProductSizes(int productId) {
+        List<ProductSize> sizes = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM product_sizes WHERE product_id = ?", new String[]{String.valueOf(productId)});
+        while (cursor.moveToNext()) {
+            ProductSize size = new ProductSize();
+            size.setSizeId(cursor.getInt(cursor.getColumnIndexOrThrow("size_id")));
+            size.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow("product_id")));
+            size.setSizeName(cursor.getString(cursor.getColumnIndexOrThrow("size_name")));
+            size.setStockQuantity(cursor.getInt(cursor.getColumnIndexOrThrow("stock_quantity")));
+            sizes.add(size);
+        }
+        cursor.close();
+        db.close();
+        return sizes;
+    }
     // Lấy tất cả sản phẩm active
     public List<Product> getAllActiveProducts() {
         List<Product> products = new ArrayList<>();

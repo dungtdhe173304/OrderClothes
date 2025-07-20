@@ -16,11 +16,14 @@ import com.example.orderclothes.adapters.CategoryAdapter;
 import com.example.orderclothes.adapters.ProductAdapter;
 import com.example.orderclothes.database.dao.CategoryDAO;
 import com.example.orderclothes.database.dao.ProductDAO;
+import com.example.orderclothes.database.dao.CartDAO; // Add this import
 import com.example.orderclothes.models.Category;
 import com.example.orderclothes.models.Product;
+import com.example.orderclothes.models.ProductSize; // Add this import
 import com.example.orderclothes.models.User;
 import com.example.orderclothes.utils.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.app.AlertDialog; // Add this import
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,15 +227,43 @@ public class UserHomeActivity extends AppCompatActivity implements
         // TODO: Navigate to product detail
         Toast.makeText(this, "Product: " + product.getProductName(), Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void onAddToCartClick(Product product) {
         if (product.getStockQuantity() <= 0) {
             Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
-        } else {
-            // TODO: Add to cart logic
-            Toast.makeText(this, "Đã thêm " + product.getProductName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        // Lấy danh sách kích thước từ bảng product_sizes
+        new Thread(() -> {
+            ProductDAO productDAO = new ProductDAO(this);
+            List<ProductSize> sizes = productDAO.getProductSizes(product.getProductId());
+            runOnUiThread(() -> {
+                if (sizes.isEmpty()) {
+                    Toast.makeText(this, "Không có kích thước nào cho sản phẩm này", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Tạo dialog để chọn kích thước
+                String[] sizeNames = sizes.stream().map(ProductSize::getSizeName).toArray(String[]::new);
+                new AlertDialog.Builder(this)
+                        .setTitle("Chọn kích thước")
+                        .setItems(sizeNames, (dialog, which) -> {
+                            ProductSize selectedSize = sizes.get(which);
+                            if (selectedSize.getStockQuantity() <= 0) {
+                                Toast.makeText(this, "Kích thước " + selectedSize.getSizeName() + " đã hết hàng", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            // Thêm sản phẩm vào giỏ hàng
+                            CartDAO cartDAO = new CartDAO(this);
+                            cartDAO.addToCart(sessionManager.getCurrentUser().getUserId(), product, selectedSize.getSizeId(), 1);
+                            Toast.makeText(this, "Đã thêm " + product.getProductName() + " (Size: " + selectedSize.getSizeName() + ") vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Hủy", null)
+                        .show();
+            });
+        }).start();
     }
 
     @Override
