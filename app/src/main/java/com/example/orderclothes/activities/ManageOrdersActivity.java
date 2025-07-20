@@ -31,21 +31,19 @@ public class ManageOrdersActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         orderDAO = new OrderDAO(this);
-        List<OrderActivity> orderActivityList = orderDAO.getAllOrders();
-
-        OrderAdapter adapter = new OrderAdapter(this, orderActivityList);
-        recyclerView.setAdapter(adapter);
+        List<OrderActivity> orderActivityList = orderDAO.getAllOrderActivities();
+        orderAdapter = new OrderAdapter(this, orderActivityList); // Use the class field
+        recyclerView.setAdapter(orderAdapter);
 
         // Thiết lập MaterialToolbar
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true); // 👈 QUAN TRỌNG
+            actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
         // Bắt sự kiện nút back
         toolbar.setNavigationOnClickListener(v -> finish());
-
     }
 }

@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import com.example.orderclothes.models.Order;
 
 import com.example.orderclothes.R;
 import com.example.orderclothes.database.dao.OrderDAO;
@@ -95,7 +96,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         OrderDAO orderDAO = new OrderDAO(this);
         int totalOrders = orderDAO.getAllOrders().size();
         double totalRevenue = orderDAO.getAllOrders().stream()
-                .mapToDouble(OrderActivity::getTotalAmount)
+                .mapToDouble(Order::getTotalAmount)
                 .sum();
 
         tvTotalOrders.setText(String.valueOf(totalOrders));
@@ -117,9 +118,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
         cardReports.setOnClickListener(v -> {
-            Toast.makeText(this, "Đang phát triển - Báo cáo thống kê", Toast.LENGTH_SHORT).show();
-            // Có thể chuyển đến activity khác nếu có
+            Intent intent = new Intent(AdminDashboardActivity.this, ReportActivity.class);
+            startActivity(intent);
         });
+
+
+
+
     }
 
     @Override
