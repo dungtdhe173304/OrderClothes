@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Tên sản phẩm -->
+        <EditText
+            android:id="@+id/etProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên sản phẩm" />
+
+        <!-- Thương hiệu -->
+        <EditText
+            android:id="@+id/etBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Thương hiệu"
+            android:layout_marginTop="8dp" />
+
+        <!-- Giá -->
+        <EditText
+            android:id="@+id/etPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giá"
+            android:inputType="numberDecimal"
+            android:layout_marginTop="8dp" />
+
+        <!-- Số lượng -->
+        <EditText
+            android:id="@+id/etQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số lượng"
+            android:inputType="number"
+            android:layout_marginTop="8dp" />
+
+        <!-- Mô tả -->
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mô tả"
+            android:minLines="3"
+            android:layout_marginTop="8dp" />
+
+        <!-- URL ảnh -->
+        <EditText
+            android:id="@+id/etImageUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="URL ảnh"
+            android:inputType="textUri"
+            android:layout_marginTop="8dp" />
+
+        <!-- Xem trước hình ảnh -->
+        <ImageView
+            android:id="@+id/ivPreviewImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="8dp"
+            android:background="@color/success_green"
+            android:contentDescription="Xem trước hình ảnh"
+            android:src="@drawable/ic_shopping_bag" />
+
+
+        <!-- Danh mục -->
+        <Spinner
+            android:id="@+id/spnCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>

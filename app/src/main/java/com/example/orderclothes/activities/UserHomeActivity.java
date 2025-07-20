@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +16,6 @@ import com.example.orderclothes.adapters.CategoryAdapter;
 import com.example.orderclothes.adapters.ProductAdapter;
 import com.example.orderclothes.database.dao.CategoryDAO;
 import com.example.orderclothes.database.dao.ProductDAO;
-import com.example.orderclothes.database.dao.CartDAO;
 import com.example.orderclothes.models.Category;
 import com.example.orderclothes.models.Product;
 import com.example.orderclothes.models.User;
@@ -59,7 +57,6 @@ public class UserHomeActivity extends AppCompatActivity implements
         setupListeners();
         setupBottomNavigation();
 
-        // Ensure the "Home" item is selected when this activity is created
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
@@ -87,16 +84,12 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void setupRecyclerViews() {
-        // Setup Categories RecyclerView
-        LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvCategories.setLayoutManager(categoryLayoutManager);
+        rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         categoryAdapter = new CategoryAdapter(this, categories);
         categoryAdapter.setOnCategoryClickListener(this);
         rvCategories.setAdapter(categoryAdapter);
 
-        // Setup Products RecyclerView
-        LinearLayoutManager productLayoutManager = new LinearLayoutManager(this);
-        rvProducts.setLayoutManager(productLayoutManager);
+        rvProducts.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(this, products);
         productAdapter.setOnProductClickListener(this);
         rvProducts.setAdapter(productAdapter);
@@ -104,9 +97,7 @@ public class UserHomeActivity extends AppCompatActivity implements
 
     private void loadData() {
         new Thread(() -> {
-            // Load categories
             List<Category> loadedCategories = categoryDAO.getAllCategories();
-            // Load products
             List<Product> loadedProducts = productDAO.getAllActiveProducts();
             runOnUiThread(() -> {
                 categories.clear();
@@ -115,7 +106,6 @@ public class UserHomeActivity extends AppCompatActivity implements
 
                 allProducts.clear();
                 allProducts.addAll(loadedProducts);
-                // Hiển thị toàn bộ sản phẩm
                 products.clear();
                 products.addAll(allProducts);
                 productAdapter.notifyDataSetChanged();
@@ -128,29 +118,19 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void setupListeners() {
-        // Search functionality
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterProducts(s.toString());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
 
-        // See all categories
-        tvSeeAllCategories.setOnClickListener(v -> {
-            Toast.makeText(this, "Show all categories - Coming soon", Toast.LENGTH_SHORT).show();
-        });
+        tvSeeAllCategories.setOnClickListener(v ->
+            Toast.makeText(this, "Show all categories - Coming soon", Toast.LENGTH_SHORT).show()
+        );
 
-        // See all products
-        tvSeeAllProducts.setOnClickListener(v -> {
-            showAllProducts();
-        });
+        tvSeeAllProducts.setOnClickListener(v -> showAllProducts());
     }
 
     private void filterProducts(String query) {
@@ -158,7 +138,6 @@ public class UserHomeActivity extends AppCompatActivity implements
             if (selectedCategory != null) {
                 filterProductsByCategory(selectedCategory);
             } else {
-                // Hiển thị lại toàn bộ sản phẩm
                 products.clear();
                 products.addAll(allProducts);
                 productAdapter.notifyDataSetChanged();
@@ -205,7 +184,6 @@ public class UserHomeActivity extends AppCompatActivity implements
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                // Already in UserHomeActivity, no action needed
                 return true;
             } else if (itemId == R.id.nav_cart) {
                 startActivity(new Intent(UserHomeActivity.this, CartActivity.class));
@@ -225,13 +203,11 @@ public class UserHomeActivity extends AppCompatActivity implements
     }
 
     private void openProfile() {
-        Intent intent = new Intent(UserHomeActivity.this, ProfileActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(UserHomeActivity.this, ProfileActivity.class));
     }
 
     private void redirectToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
@@ -245,33 +221,25 @@ public class UserHomeActivity extends AppCompatActivity implements
 
     @Override
     public void onProductClick(Product product) {
-        Intent intent = new Intent(this, ProductDetailActivity.class);
-        intent.putExtra("product_id", product.getProductId());
-        startActivity(intent);
+        // TODO: Navigate to product detail
+        Toast.makeText(this, "Product: " + product.getProductName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onAddToCartClick(Product product) {
         if (product.getStockQuantity() <= 0) {
             Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
-            return;
+        } else {
+            // TODO: Add to cart logic
+            Toast.makeText(this, "Đã thêm " + product.getProductName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
         }
-        if (currentUser == null) {
-            Toast.makeText(this, "Bạn cần đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        CartDAO cartDAO = new CartDAO(this);
-        cartDAO.addToCart(currentUser.getUserId(), product, 1);
-        Toast.makeText(this, "Đã thêm " + product.getProductName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBackPressed() {
-        // Clear search and category filter when back pressed
         if (!etSearch.getText().toString().isEmpty() || selectedCategory != null) {
             etSearch.setText("");
             selectedCategory = null;
-            // Hiển thị lại toàn bộ sản phẩm
             products.clear();
             products.addAll(allProducts);
             productAdapter.notifyDataSetChanged();
@@ -283,7 +251,6 @@ public class UserHomeActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        // Ensure the "Home" item is selected when the activity starts
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 }
